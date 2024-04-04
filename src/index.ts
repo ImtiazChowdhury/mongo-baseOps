@@ -1,8 +1,8 @@
 
-import client, { Client, mongoDB } from "@imtiazchowdhury/mongopool";
+import client from "@imtiazchowdhury/mongopool";
 import paginate from "mongodb-paginate";
-import mongodb from "mongodb"
-import { Paginate, PaginationOptions } from "mongodb-paginate/dist/types/types";
+import mongodb, {ObjectId} from "mongodb"
+import { PaginationOptions } from "mongodb-paginate/dist/types/types";
 
 class BaseDatabaseOps {
     private _db: mongodb.Db | null;
@@ -57,37 +57,38 @@ class BaseDatabaseOps {
 
 
 
-    async writeOne(entity: mongodb.Document) {
-        const writeResults = await (await this.getCollection()).insertOne(entity);
+    async writeOne(doc: mongodb.BSON.Document, options?: mongodb.InsertOneOptions) {
+        console.log({doc})
+        const writeResults = await (await this.getCollection()).insertOne(doc, options);
 
-        entity["_id"] = writeResults.insertedId;
-        return entity;
+        doc["_id"] = writeResults.insertedId;
+        return doc;
     }
 
 
-    async writeMany(entityList: Array<mongodb.Document>) {
-        const writeResults = await (await this.getCollection()).insertMany(entityList);
+    async writeMany(docs: mongodb.OptionalId<mongodb.BSON.Document>[], options?: mongodb.BulkWriteOptions) {
+        const writeResults = await (await this.getCollection()).insertMany(docs, options);
 
         for (let key in writeResults.insertedIds) {
             const id = writeResults.insertedIds[key];
-            const entity = entityList[key]
-            if (entity) {
+            const entity = docs[key]
+            if (entity && id) {
                 entity["_id"] = id;
             }
         }
-        return entityList;
+        return docs;
     }
 
 
 
-    async updateOne(id: mongodb.ObjectId, entity: mongodb.Document) {
-        const updateResults = await (await this.getCollection()).updateOne({ _id: new mongodb.ObjectId(id) }, { $set: entity })
+    async updateOne(id: ObjectId, entity: mongodb.BSON.Document, options?: mongodb.UpdateOptions) {
+        const updateResults = await (await this.getCollection()).updateOne({ _id: new ObjectId(id) }, { $set: entity }, options)
         return updateResults;
     }
 
 
 
-    async updateMany(entityList: Array<mongodb.Document>) {
+    async updateMany(entityList: Array<mongodb.Document>, options?: mongodb.UpdateOptions) {
 
         const session = (await this.getClient()).startSession();
         session.startTransaction();
@@ -101,7 +102,7 @@ class BaseDatabaseOps {
 
                 const collection = await this.getCollection();
                 updatePromises.push(
-                    collection.updateOne({ _id: new mongodb.ObjectId(id) }, { $set: entity })
+                    collection.updateOne({ _id: new ObjectId(id) }, { $set: entity }, options)
                 )
             }
 
@@ -115,27 +116,27 @@ class BaseDatabaseOps {
         }
     }
 
-    async readOne(id: mongodb.ObjectId, resolve: mongodb.Document = {}) {
+    async readOne(id: ObjectId, resolve: mongodb.Document = {}) {
         // this is the bare minimum implementation
         // resolve will be different for each collection
-        // so this method will have to be overridden if  someone tries to resolve any property
+        // so this method will have to be overridden if someone tries to resolve any property
 
         if (Object.keys(resolve).length) {
             console.warn("base implementation doesn't respond to `resolve`. You need to override the `readOne` method for collection " + this.collectionName)
         }
-        const result = await (await this.getCollection()).findOne({ _id: new mongodb.ObjectId(id) });
+        const result = await (await this.getCollection()).findOne({ _id: new ObjectId(id) });
         return result;
     }
-    async readMany(id: Array<mongodb.ObjectId>, resolve: mongodb.Document = {}) {
+    async readMany(id: Array<ObjectId | undefined>, resolve: mongodb.Document = {}) {
         // this is the bare minimum implementation
         // resolve will be different for each collection
-        // so this method will have to be overridden if  someone tries to resolve any property
+        // so this method will have to be overridden if someone tries to resolve any property
 
         if (Object.keys(resolve).length) {
             console.warn("base implementation doesn't respond to `resolve`. You need to override the `readMany` method for collection " + this.collectionName)
         }
         const result = await (await this.getCollection()).find({
-            _id: { $in: id.map(i => new mongodb.ObjectId(i)) }
+            _id: { $in: id.map(i => new ObjectId(i)) }
         }
         ).toArray();
         return result;
@@ -145,7 +146,7 @@ class BaseDatabaseOps {
 
         // only support pagination options here
         // filter & resolve will be different queries for each collection
-        // so the developer will have to  override them if he needs filtering and resolve
+        // so the developer will have to override them if he needs filtering and resolve
 
         if (Object.keys(filter).length) {
             console.warn("base implementation doesn't respond to `filter`. You need to override the `list` method for collection " + this.collectionName)
@@ -158,18 +159,18 @@ class BaseDatabaseOps {
     }
 
 
-    async removeOne(id: mongodb.ObjectId) {
-        const deleteResult = (await this.getCollection()).deleteOne({ _id: new mongodb.ObjectId(id) });
+    async removeOne(id: ObjectId) {
+        const deleteResult = (await this.getCollection()).deleteOne({ _id: new ObjectId(id) });
         return deleteResult;
     }
 
-    async removeMany(idList: Array<mongoDB.ObjectId>) {
+    async removeMany(idList: Array<ObjectId | undefined>) {
         if (!Array.isArray(idList)) {
             throw new TypeError("idList must be an array, received " + typeof idList)
         }
-        const deleteResults = await (await this.getCollection()).deleteMany({ _id: { $in: idList.map(i => new mongodb.ObjectId(i)) } });
+        const deleteResults = await (await this.getCollection()).deleteMany({ _id: { $in: idList.map(i => new ObjectId(i)) } });
         return deleteResults;
     }
 }
 
-module.exports = BaseDatabaseOps;
+export default BaseDatabaseOps;
