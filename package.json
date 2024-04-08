@@ -1,6 +1,6 @@
 {
   "name": "mongo-baseops",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "mongo db database baseops",
   "main": "build/index.js",
   "scripts": {
