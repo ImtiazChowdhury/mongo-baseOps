@@ -81,7 +81,7 @@ class BaseDatabaseOps {
 
 
 
-    async updateOne(id: ObjectId, entity: mongodb.BSON.Document, options?: mongodb.UpdateOptions) {
+    async updateOne(id: string | ObjectId, entity: mongodb.BSON.Document, options?: mongodb.UpdateOptions) {
         const updateResults = await (await this.getCollection()).updateOne({ _id: new ObjectId(id) }, { $set: entity }, options)
         return updateResults;
     }
@@ -116,7 +116,7 @@ class BaseDatabaseOps {
         }
     }
 
-    async readOne(id: ObjectId, resolve: mongodb.Document = {}) {
+    async readOne(id: string | ObjectId, resolve: mongodb.Document = {}) {
         // this is the bare minimum implementation
         // resolve will be different for each collection
         // so this method will have to be overridden if someone tries to resolve any property
@@ -127,7 +127,7 @@ class BaseDatabaseOps {
         const result = await (await this.getCollection()).findOne({ _id: new ObjectId(id) });
         return result;
     }
-    async readMany(id: Array<ObjectId | undefined>, resolve: mongodb.Document = {}) {
+    async readMany(id: Array<string | ObjectId | undefined>, resolve: mongodb.Document = {}) {
         // this is the bare minimum implementation
         // resolve will be different for each collection
         // so this method will have to be overridden if someone tries to resolve any property
@@ -159,12 +159,12 @@ class BaseDatabaseOps {
     }
 
 
-    async removeOne(id: ObjectId) {
+    async removeOne(id: string | ObjectId) {
         const deleteResult = (await this.getCollection()).deleteOne({ _id: new ObjectId(id) });
         return deleteResult;
     }
 
-    async removeMany(idList: Array<ObjectId | undefined>) {
+    async removeMany(idList: Array<string | ObjectId | undefined>) {
         if (!Array.isArray(idList)) {
             throw new TypeError("idList must be an array, received " + typeof idList)
         }
