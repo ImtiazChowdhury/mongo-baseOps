@@ -20,7 +20,7 @@ declare class BaseDatabaseOps {
     readOne(id: string | ObjectId, resolve?: mongodb.Document): Promise<mongodb.WithId<mongodb.BSON.Document> | null>;
     readMany(id: Array<string | ObjectId | undefined>, resolve?: mongodb.Document): Promise<mongodb.WithId<mongodb.BSON.Document>[]>;
     list(filter: {} | undefined, resolve: {} | undefined, paginationOptions: PaginationOptions): Promise<import("mongodb-paginate/dist/types/types").PaginateResult | import("mongodb-paginate/dist/types/types").EmptyPaginateResult>;
-    removeOne(id: string | ObjectId): Promise<mongodb.DeleteResult>;
+    removeOne(id: string | ObjectId | undefined): Promise<mongodb.DeleteResult>;
     removeMany(idList: Array<string | ObjectId | undefined>): Promise<mongodb.DeleteResult>;
 }
 export default BaseDatabaseOps;
