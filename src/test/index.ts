@@ -13,8 +13,8 @@ async function main() {
     console.log({ writeManyResult })
 
     if (writeOneResult["_id"]) {
-        console.log({writeOneResultId: writeOneResult["_id"]})
-        const readOneResult = await dbOps.readOne(writeOneResult["_id"])
+        console.log({writeOneResultId: writeOneResult._id})
+        const readOneResult = await dbOps.readOne(writeOneResult._id)
         console.log({readOneResult})
     }
 

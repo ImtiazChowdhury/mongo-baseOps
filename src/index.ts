@@ -71,7 +71,7 @@ class BaseDatabaseOps {
 
 
 
-    async writeOne(doc: mongodb.BSON.Document, options?: mongodb.InsertOneOptions) {
+    async writeOne(doc: mongodb.OptionalId<mongodb.BSON.Document>, options?: mongodb.InsertOneOptions) {
         console.log({doc})
         const writeResults = await (await this.getCollection()).insertOne(doc, options);
 
@@ -95,14 +95,14 @@ class BaseDatabaseOps {
 
 
 
-    async updateOne(id: string | ObjectId, entity: mongodb.BSON.Document, options?: mongodb.UpdateOptions) {
+    async updateOne(id: string | ObjectId, entity: mongodb.OptionalId<mongodb.BSON.Document>, options?: mongodb.UpdateOptions) {
         const updateResults = await (await this.getCollection()).updateOne({ _id: new ObjectId(id) }, { $set: entity }, options)
         return updateResults;
     }
 
 
 
-    async updateMany(entityList: Array<mongodb.Document>, options?: mongodb.UpdateOptions) {
+    async updateMany(entityList: Array<mongodb.OptionalId<mongodb.BSON.Document>>, options?: mongodb.UpdateOptions) {
 
         const session = (await this.getClient()).startSession();
         session.startTransaction();
