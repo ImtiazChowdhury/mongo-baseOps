@@ -24,8 +24,8 @@ function main() {
         console.log({ writeOneResult });
         console.log({ writeManyResult });
         if (writeOneResult["_id"]) {
-            console.log({ writeOneResultId: writeOneResult["_id"] });
-            const readOneResult = yield dbOps.readOne(writeOneResult["_id"]);
+            console.log({ writeOneResultId: writeOneResult._id });
+            const readOneResult = yield dbOps.readOne(writeOneResult._id);
             console.log({ readOneResult });
         }
         const readManyResult = yield dbOps.readMany(writeManyResult.map(i => i._id));

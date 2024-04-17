@@ -54,7 +54,7 @@
 
 #### Defined in
 
-[src/index.ts:18](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L18)
+[src/index.ts:18](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/8a06a94fb4a5e576dc91ee3611cb6f52e91c3960/src/index.ts#L18)
 
 ## Properties
 
@@ -64,7 +64,7 @@
 
 #### Defined in
 
-[src/index.ts:12](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L12)
+[src/index.ts:12](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/8a06a94fb4a5e576dc91ee3611cb6f52e91c3960/src/index.ts#L12)
 
 ___
 
@@ -74,7 +74,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:8](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L8)
+[src/index.ts:8](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/8a06a94fb4a5e576dc91ee3611cb6f52e91c3960/src/index.ts#L8)
 
 ___
 
@@ -84,7 +84,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:13](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L13)
+[src/index.ts:13](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/8a06a94fb4a5e576dc91ee3611cb6f52e91c3960/src/index.ts#L13)
 
 ___
 
@@ -94,7 +94,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:9](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L9)
+[src/index.ts:9](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/8a06a94fb4a5e576dc91ee3611cb6f52e91c3960/src/index.ts#L9)
 
 ___
 
@@ -104,7 +104,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:10](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L10)
+[src/index.ts:10](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/8a06a94fb4a5e576dc91ee3611cb6f52e91c3960/src/index.ts#L10)
 
 ___
 
@@ -114,7 +114,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:11](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L11)
+[src/index.ts:11](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/8a06a94fb4a5e576dc91ee3611cb6f52e91c3960/src/index.ts#L11)
 
 ___
 
@@ -124,7 +124,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:15](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L15)
+[src/index.ts:15](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/8a06a94fb4a5e576dc91ee3611cb6f52e91c3960/src/index.ts#L15)
 
 ___
 
@@ -134,7 +134,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:16](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L16)
+[src/index.ts:16](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/8a06a94fb4a5e576dc91ee3611cb6f52e91c3960/src/index.ts#L16)
 
 ## Methods
 
@@ -148,7 +148,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:64](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L64)
+[src/index.ts:64](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/8a06a94fb4a5e576dc91ee3611cb6f52e91c3960/src/index.ts#L64)
 
 ___
 
@@ -162,7 +162,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:54](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L54)
+[src/index.ts:54](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/8a06a94fb4a5e576dc91ee3611cb6f52e91c3960/src/index.ts#L54)
 
 ___
 
@@ -176,7 +176,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:44](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L44)
+[src/index.ts:44](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/8a06a94fb4a5e576dc91ee3611cb6f52e91c3960/src/index.ts#L44)
 
 ___
 
@@ -198,7 +198,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:159](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L159)
+[src/index.ts:159](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/8a06a94fb4a5e576dc91ee3611cb6f52e91c3960/src/index.ts#L159)
 
 ___
 
@@ -219,7 +219,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:144](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L144)
+[src/index.ts:144](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/8a06a94fb4a5e576dc91ee3611cb6f52e91c3960/src/index.ts#L144)
 
 ___
 
@@ -240,7 +240,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:133](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L133)
+[src/index.ts:133](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/8a06a94fb4a5e576dc91ee3611cb6f52e91c3960/src/index.ts#L133)
 
 ___
 
@@ -260,7 +260,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:181](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L181)
+[src/index.ts:181](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/8a06a94fb4a5e576dc91ee3611cb6f52e91c3960/src/index.ts#L181)
 
 ___
 
@@ -280,7 +280,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:176](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L176)
+[src/index.ts:176](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/8a06a94fb4a5e576dc91ee3611cb6f52e91c3960/src/index.ts#L176)
 
 ___
 
@@ -292,7 +292,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `entityList` | [`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md)[] |
+| `entityList` | [`OptionalId`](../modules/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.md#optionalid)\<[`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md)\>[] |
 | `options?` | [`UpdateOptions`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.UpdateOptions.md) |
 
 #### Returns
@@ -301,7 +301,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:105](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L105)
+[src/index.ts:105](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/8a06a94fb4a5e576dc91ee3611cb6f52e91c3960/src/index.ts#L105)
 
 ___
 
@@ -314,7 +314,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `id` | `string` \| [`ObjectId`](internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.ObjectId.md) |
-| `entity` | [`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md) |
+| `entity` | [`OptionalId`](../modules/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.md#optionalid)\<[`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md)\> |
 | `options?` | [`UpdateOptions`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.UpdateOptions.md) |
 
 #### Returns
@@ -323,7 +323,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:98](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L98)
+[src/index.ts:98](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/8a06a94fb4a5e576dc91ee3611cb6f52e91c3960/src/index.ts#L98)
 
 ___
 
@@ -344,25 +344,25 @@ ___
 
 #### Defined in
 
-[src/index.ts:83](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L83)
+[src/index.ts:83](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/8a06a94fb4a5e576dc91ee3611cb6f52e91c3960/src/index.ts#L83)
 
 ___
 
 ### writeOne
 
-▸ **writeOne**(`doc`, `options?`): `Promise`\<[`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md)\>
+▸ **writeOne**(`doc`, `options?`): `Promise`\<[`OptionalId`](../modules/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.md#optionalid)\<[`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md)\>\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `doc` | [`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md) |
+| `doc` | [`OptionalId`](../modules/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.md#optionalid)\<[`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md)\> |
 | `options?` | [`InsertOneOptions`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.InsertOneOptions.md) |
 
 #### Returns
 
-`Promise`\<[`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md)\>
+`Promise`\<[`OptionalId`](../modules/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.md#optionalid)\<[`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md)\>\>
 
 #### Defined in
 
-[src/index.ts:74](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L74)
+[src/index.ts:74](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/8a06a94fb4a5e576dc91ee3611cb6f52e91c3960/src/index.ts#L74)
