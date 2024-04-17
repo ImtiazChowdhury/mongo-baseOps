@@ -12,11 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongopool_1 = __importDefault(require("@imtiazchowdhury/mongopool"));
+// import mongoClient from "@imtiazchowdhury/mongopool";
 const __1 = __importDefault(require(".."));
-mongopool_1.default.url = "mongodb://localhost:27017";
-mongopool_1.default.dbName = "baseOpsTest";
-const dbOps = new __1.default("user");
+// mongoClient.url = "mongodb://localhost:27017";
+// mongoClient.dbName = "baseOpsTest";
+const dbOps = new __1.default("user", "baseOpsTest", "mongodb://localhost:27017");
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         const writeOneResult = yield dbOps.writeOne(dummyUsers[0]);

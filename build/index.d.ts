@@ -3,11 +3,13 @@ import { PaginationOptions } from "mongodb-paginate/dist/types/types";
 declare class BaseDatabaseOps {
     private _db;
     collectionName: string;
+    dbName: string | null;
+    dbUrl: string | null;
     private _collection;
     client: mongodb.MongoClient | null;
     static ObjectId: typeof mongodb.BSON.ObjectId;
     static mongodb: typeof mongodb;
-    constructor(collectionName: string);
+    constructor(collectionName: string, dbName?: string, dbUrl?: string);
     getDB(): Promise<mongodb.Db>;
     getCollection(): Promise<mongodb.Collection<mongodb.BSON.Document>>;
     getClient(): Promise<mongodb.MongoClient>;

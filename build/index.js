@@ -39,9 +39,19 @@ const mongopool_1 = __importDefault(require("@imtiazchowdhury/mongopool"));
 const mongodb_paginate_1 = __importDefault(require("mongodb-paginate"));
 const mongodb_1 = __importStar(require("mongodb"));
 class BaseDatabaseOps {
-    constructor(collectionName) {
+    constructor(collectionName, dbName, dbUrl) {
+        this.dbName = null;
+        this.dbUrl = null;
         if (!collectionName || typeof collectionName !== "string") {
             throw new TypeError("first argument collectionName must be string, received " + typeof collectionName);
+        }
+        if (dbName) {
+            this.dbName = dbName;
+            mongopool_1.default.dbName = dbName;
+        }
+        if (dbUrl) {
+            this.dbUrl = dbUrl;
+            mongopool_1.default.url = dbUrl;
         }
         this._db = null;
         this.collectionName = collectionName;

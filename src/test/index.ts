@@ -1,10 +1,10 @@
-import mongoClient from "@imtiazchowdhury/mongopool";
+// import mongoClient from "@imtiazchowdhury/mongopool";
 import BaseDatabaseOps from "..";
 
-mongoClient.url = "mongodb://localhost:27017";
-mongoClient.dbName = "baseOpsTest";
+// mongoClient.url = "mongodb://localhost:27017";
+// mongoClient.dbName = "baseOpsTest";
 
-const dbOps = new BaseDatabaseOps("user")
+const dbOps = new BaseDatabaseOps("user", "baseOpsTest", "mongodb://localhost:27017")
 
 async function main() {
     const writeOneResult = await dbOps.writeOne(dummyUsers[0])

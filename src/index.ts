@@ -7,16 +7,27 @@ import { PaginationOptions } from "mongodb-paginate/dist/types/types";
 class BaseDatabaseOps {
     private _db: mongodb.Db | null;
     public collectionName: string;
+    public dbName: string | null = null;
+    public dbUrl: string | null = null;
     private _collection: mongodb.Collection | null;
     public client: mongodb.MongoClient | null;
 
     public static ObjectId = ObjectId;
     public static mongodb = mongodb;
 
-    constructor(collectionName: string) {
+    constructor(collectionName: string, dbName?: string, dbUrl?: string) {
 
         if (!collectionName || typeof collectionName !== "string") {
             throw new TypeError("first argument collectionName must be string, received " + typeof collectionName);
+        }
+
+        if(dbName){
+            this.dbName = dbName;
+            client.dbName = dbName
+        }
+        if(dbUrl){
+            this.dbUrl = dbUrl;
+            client.url = dbUrl
         }
 
         this._db = null;
