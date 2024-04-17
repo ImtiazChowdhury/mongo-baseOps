@@ -173,7 +173,7 @@ class BaseDatabaseOps {
     }
 
 
-    async removeOne(id: string | ObjectId) {
+    async removeOne(id: string | ObjectId | undefined) {
         const deleteResult = (await this.getCollection()).deleteOne({ _id: new ObjectId(id) });
         return deleteResult;
     }
