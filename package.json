@@ -4,12 +4,16 @@
   "description": "mongo db database baseops",
   "main": "build/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate-doc": "npx typedoc ./src/index.ts --plugin typedoc-plugin-missing-exports --plugin typedoc-plugin-markdown"
   },
   "dependencies": {
     "@imtiazchowdhury/mongopool": "^1.5.1",
     "mongodb": "^6.5.0",
-    "mongodb-paginate": "^1.2.0"
+    "mongodb-paginate": "^1.2.0",
+    "typedoc": "^0.25.13",
+    "typedoc-plugin-markdown": "^3.17.1",
+    "typedoc-plugin-missing-exports": "^2.2.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",

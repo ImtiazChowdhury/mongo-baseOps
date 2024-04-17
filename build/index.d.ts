@@ -5,6 +5,8 @@ declare class BaseDatabaseOps {
     collectionName: string;
     private _collection;
     client: mongodb.MongoClient | null;
+    static ObjectId: typeof mongodb.BSON.ObjectId;
+    static mongodb: typeof mongodb;
     constructor(collectionName: string);
     getDB(): Promise<mongodb.Db>;
     getCollection(): Promise<mongodb.Collection<mongodb.BSON.Document>>;

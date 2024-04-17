@@ -10,6 +10,9 @@ class BaseDatabaseOps {
     private _collection: mongodb.Collection | null;
     public client: mongodb.MongoClient | null;
 
+    public static ObjectId = ObjectId;
+    public static mongodb = mongodb;
+
     constructor(collectionName: string) {
 
         if (!collectionName || typeof collectionName !== "string") {
