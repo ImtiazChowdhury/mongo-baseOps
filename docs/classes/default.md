@@ -14,6 +14,8 @@
 - [\_db](default.md#_db)
 - [client](default.md#client)
 - [collectionName](default.md#collectionname)
+- [dbName](default.md#dbname)
+- [dbUrl](default.md#dburl)
 - [ObjectId](default.md#objectid)
 - [mongodb](default.md#mongodb)
 
@@ -36,13 +38,15 @@
 
 ### constructor
 
-• **new default**(`collectionName`): [`default`](default.md)
+• **new default**(`collectionName`, `dbName?`, `dbUrl?`): [`default`](default.md)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `collectionName` | `string` |
+| `dbName?` | `string` |
+| `dbUrl?` | `string` |
 
 #### Returns
 
@@ -50,7 +54,7 @@
 
 #### Defined in
 
-[src/index.ts:16](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/af6e75a3ba1971e5d9a0ca8ad27ac01842bfd039/src/index.ts#L16)
+[src/index.ts:18](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L18)
 
 ## Properties
 
@@ -60,7 +64,7 @@
 
 #### Defined in
 
-[src/index.ts:10](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/af6e75a3ba1971e5d9a0ca8ad27ac01842bfd039/src/index.ts#L10)
+[src/index.ts:12](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L12)
 
 ___
 
@@ -70,7 +74,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:8](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/af6e75a3ba1971e5d9a0ca8ad27ac01842bfd039/src/index.ts#L8)
+[src/index.ts:8](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L8)
 
 ___
 
@@ -80,7 +84,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:11](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/af6e75a3ba1971e5d9a0ca8ad27ac01842bfd039/src/index.ts#L11)
+[src/index.ts:13](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L13)
 
 ___
 
@@ -90,7 +94,27 @@ ___
 
 #### Defined in
 
-[src/index.ts:9](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/af6e75a3ba1971e5d9a0ca8ad27ac01842bfd039/src/index.ts#L9)
+[src/index.ts:9](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L9)
+
+___
+
+### dbName
+
+• **dbName**: ``null`` \| `string` = `null`
+
+#### Defined in
+
+[src/index.ts:10](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L10)
+
+___
+
+### dbUrl
+
+• **dbUrl**: ``null`` \| `string` = `null`
+
+#### Defined in
+
+[src/index.ts:11](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L11)
 
 ___
 
@@ -100,7 +124,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:13](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/af6e75a3ba1971e5d9a0ca8ad27ac01842bfd039/src/index.ts#L13)
+[src/index.ts:15](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L15)
 
 ___
 
@@ -110,7 +134,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:14](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/af6e75a3ba1971e5d9a0ca8ad27ac01842bfd039/src/index.ts#L14)
+[src/index.ts:16](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L16)
 
 ## Methods
 
@@ -124,7 +148,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:53](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/af6e75a3ba1971e5d9a0ca8ad27ac01842bfd039/src/index.ts#L53)
+[src/index.ts:64](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L64)
 
 ___
 
@@ -138,7 +162,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:43](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/af6e75a3ba1971e5d9a0ca8ad27ac01842bfd039/src/index.ts#L43)
+[src/index.ts:54](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L54)
 
 ___
 
@@ -152,7 +176,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:33](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/af6e75a3ba1971e5d9a0ca8ad27ac01842bfd039/src/index.ts#L33)
+[src/index.ts:44](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L44)
 
 ___
 
@@ -174,7 +198,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:148](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/af6e75a3ba1971e5d9a0ca8ad27ac01842bfd039/src/index.ts#L148)
+[src/index.ts:159](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L159)
 
 ___
 
@@ -195,7 +219,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:133](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/af6e75a3ba1971e5d9a0ca8ad27ac01842bfd039/src/index.ts#L133)
+[src/index.ts:144](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L144)
 
 ___
 
@@ -216,7 +240,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:122](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/af6e75a3ba1971e5d9a0ca8ad27ac01842bfd039/src/index.ts#L122)
+[src/index.ts:133](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L133)
 
 ___
 
@@ -236,7 +260,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:170](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/af6e75a3ba1971e5d9a0ca8ad27ac01842bfd039/src/index.ts#L170)
+[src/index.ts:181](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L181)
 
 ___
 
@@ -256,7 +280,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:165](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/af6e75a3ba1971e5d9a0ca8ad27ac01842bfd039/src/index.ts#L165)
+[src/index.ts:176](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L176)
 
 ___
 
@@ -277,7 +301,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:94](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/af6e75a3ba1971e5d9a0ca8ad27ac01842bfd039/src/index.ts#L94)
+[src/index.ts:105](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L105)
 
 ___
 
@@ -299,7 +323,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:87](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/af6e75a3ba1971e5d9a0ca8ad27ac01842bfd039/src/index.ts#L87)
+[src/index.ts:98](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L98)
 
 ___
 
@@ -320,7 +344,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:72](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/af6e75a3ba1971e5d9a0ca8ad27ac01842bfd039/src/index.ts#L72)
+[src/index.ts:83](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L83)
 
 ___
 
@@ -341,4 +365,4 @@ ___
 
 #### Defined in
 
-[src/index.ts:63](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/af6e75a3ba1971e5d9a0ca8ad27ac01842bfd039/src/index.ts#L63)
+[src/index.ts:74](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/9d9ac2c406911bfcb5c3a6f38fc9e0f2f21fd7ac/src/index.ts#L74)
