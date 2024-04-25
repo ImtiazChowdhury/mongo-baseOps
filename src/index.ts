@@ -169,7 +169,7 @@ class BaseDatabaseOps {
             console.warn("base implementation doesn't respond to `resolve`. You need to override the `list` method for collection " + this.collectionName)
         }
 
-        return await paginate(this.collectionName, [], [], paginationOptions)
+        return await paginate(await this.getCollection(), [], [], paginationOptions)
     }
 
 
