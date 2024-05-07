@@ -72,7 +72,6 @@ class BaseDatabaseOps {
 
 
     async writeOne(doc: mongodb.OptionalId<mongodb.BSON.Document>, options?: mongodb.InsertOneOptions) {
-        console.log({doc})
         const writeResults = await (await this.getCollection()).insertOne(doc, options);
 
         doc["_id"] = writeResults.insertedId;
