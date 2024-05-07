@@ -88,7 +88,6 @@ class BaseDatabaseOps {
     }
     writeOne(doc, options) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log({ doc });
             const writeResults = yield (yield this.getCollection()).insertOne(doc, options);
             doc["_id"] = writeResults.insertedId;
             return doc;
@@ -172,7 +171,7 @@ class BaseDatabaseOps {
             if (Object.keys(resolve).length) {
                 console.warn("base implementation doesn't respond to `resolve`. You need to override the `list` method for collection " + this.collectionName);
             }
-            return yield (0, mongodb_paginate_1.default)(this.collectionName, [], [], paginationOptions);
+            return yield (0, mongodb_paginate_1.default)(yield this.getCollection(), [], [], paginationOptions);
         });
     }
     removeOne(id) {
