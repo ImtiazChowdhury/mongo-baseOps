@@ -95,6 +95,7 @@ class BaseDatabaseOps {
 
 
     async updateOne(id: string | ObjectId, entity: mongodb.OptionalId<mongodb.BSON.Document>, options?: mongodb.UpdateOptions) {
+        delete entity._id;
         const updateResults = await (await this.getCollection()).updateOne({ _id: new ObjectId(id) }, { $set: entity }, options)
         return updateResults;
     }

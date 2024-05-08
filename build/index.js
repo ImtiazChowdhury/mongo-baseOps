@@ -108,6 +108,7 @@ class BaseDatabaseOps {
     }
     updateOne(id, entity, options) {
         return __awaiter(this, void 0, void 0, function* () {
+            delete entity._id;
             const updateResults = yield (yield this.getCollection()).updateOne({ _id: new mongodb_1.ObjectId(id) }, { $set: entity }, options);
             return updateResults;
         });
