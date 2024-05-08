@@ -37,4 +37,3 @@ const dummyUsers = [
     }
 ]
 
-main()

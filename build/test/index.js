@@ -44,4 +44,3 @@ const dummyUsers = [
         company: "Sheba Innovations Ltd",
     }
 ];
-main();
