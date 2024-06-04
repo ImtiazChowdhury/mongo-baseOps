@@ -4,26 +4,45 @@ import BaseDatabaseOps from "..";
 // mongoClient.url = "mongodb://localhost:27017";
 // mongoClient.dbName = "baseOpsTest";
 
-const dbOps = new BaseDatabaseOps("user", "baseOpsTest", "mongodb://localhost:27017")
+type User = {
+    name: string,
+    company: string,
+}
 
-async function main() {
-    const writeOneResult = await dbOps.writeOne(dummyUsers[0])
-    const writeManyResult = await dbOps.writeMany([dummyUsers[1]])
-    console.log({ writeOneResult })
-    console.log({ writeManyResult })
+const dbOpsSDTS = new BaseDatabaseOps<User>("user", "baseOpsTest[sdts]", "mongodb://localhost:27017", {
+    softDelete: true,
+    timestamps: true
+})
 
-    if (writeOneResult["_id"]) {
-        console.log({writeOneResultId: writeOneResult._id})
-        const readOneResult = await dbOps.readOne(writeOneResult._id)
-        console.log({readOneResult})
-    }
+async function testSDTS() {
+    const results = await dbOpsSDTS.writeMany(dummyUsers);
+    console.log("Results: ", results[0], " total created length: ", results.length);
 
-    const readManyResult = await dbOps.readMany(writeManyResult.map(i=> i._id))
-    console.log({readManyResult})
+    //check type
+    results[0].name, results[0].company, results[0]._id, results[0].createdAt
+    //delete first 2 users
+    let res1 = await dbOpsSDTS.removeMany([results[0]._id, results[1]._id]);
+    console.log("soft deleted results count : ", res1.deletedCount);
+    //2nd 2 remove hard
+    let res2 = await dbOpsSDTS.removeMany([results[2]._id, results[3]._id], true);
+    console.log("hard deleted results count : ", res2.deletedCount);
+    //try update soft deleted users
+    const updatedResults = await dbOpsSDTS.updateMany(results.map((r, i) => ({ ...r, name: "Updated "+i })))
+    console.log("soft delete Updated Results length: ", updatedResults.modifiedCount, updatedResults);
+    // try to update soft deleted users by override
+    const updatedResults2 = await dbOpsSDTS.updateMany(results.map((r, i) => ({ ...r, name: "Updated "+i })),{}, true)
+    console.log("hard delete Updated Results length: ", updatedResults2.modifiedCount, updatedResults2);
 
-    const deleteManyResult = await dbOps.removeMany(writeManyResult.map(i=> i._id))
-    console.log({deleteManyResult})
+    // paginate results with soft deleted
+    const paginatedResults = await dbOpsSDTS.paginate([], [], {});
+    console.log("soft delete -> Paginated Results length: ", paginatedResults.data.length);
 
+    // paginate results without soft deleted
+    const paginatedResults2 = await dbOpsSDTS.paginate([], [], {}, [], {}, true);
+    console.log("override soft delete -> Paginated Results length: ", paginatedResults2.data.length);
+    
+    
+    dbOpsSDTS.getClient().then(e=> e.close())
 }
 
 const dummyUsers = [
@@ -34,6 +53,43 @@ const dummyUsers = [
     {
         name: "Fahim Raz",
         company: "Sheba Innovations Ltd",
-    }
+    },
+    {
+        name: "Raihan Kabir",
+        company: "Sheba Innovations Ltd",
+    },
+    {
+        name: "Fatema Chowdhury",
+        company: "Sheba Innovations Ltd",
+    },
+    {
+        name: "Tanjil Chowdhury",
+        company: "Sheba Innovations Ltd",
+    },
+    {
+        name: "Sakib Chowdhury",
+        company: "Sheba Innovations Ltd",
+    },
+    {
+        name: "Sakib Chowdhury",
+        company: "Sheba Innovations Ltd",
+    },
+    {
+        name: "Sakib Chowdhury",
+        company: "Sheba Innovations Ltd",
+    },
+    {
+        name: "Sakib Chowdhury",
+        company: "Sheba Innovations Ltd",
+    },
+    {
+        name: "Sakib Chowdhury",
+        company: "Sheba Innovations Ltd",
+    },
 ]
+
+testSDTS()
+
+//close connection
+
 
