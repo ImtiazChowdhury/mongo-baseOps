@@ -14,24 +14,35 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 // import mongoClient from "@imtiazchowdhury/mongopool";
 const __1 = __importDefault(require(".."));
-// mongoClient.url = "mongodb://localhost:27017";
-// mongoClient.dbName = "baseOpsTest";
-const dbOps = new __1.default("user", "baseOpsTest", "mongodb://localhost:27017");
-function main() {
+const dbOpsSDTS = new __1.default("user", "baseOpsTest[sdts]", "mongodb://localhost:27017", {
+    softDelete: true,
+    timestamps: true
+});
+function testSDTS() {
     return __awaiter(this, void 0, void 0, function* () {
-        const writeOneResult = yield dbOps.writeOne(dummyUsers[0]);
-        const writeManyResult = yield dbOps.writeMany([dummyUsers[1]]);
-        console.log({ writeOneResult });
-        console.log({ writeManyResult });
-        if (writeOneResult["_id"]) {
-            console.log({ writeOneResultId: writeOneResult._id });
-            const readOneResult = yield dbOps.readOne(writeOneResult._id);
-            console.log({ readOneResult });
-        }
-        const readManyResult = yield dbOps.readMany(writeManyResult.map(i => i._id));
-        console.log({ readManyResult });
-        const deleteManyResult = yield dbOps.removeMany(writeManyResult.map(i => i._id));
-        console.log({ deleteManyResult });
+        const results = yield dbOpsSDTS.writeMany(dummyUsers);
+        console.log("Results: ", results[0], " total created length: ", results.length);
+        //check type
+        results[0].name, results[0].company, results[0]._id, results[0].createdAt;
+        //delete first 2 users
+        let res1 = yield dbOpsSDTS.removeMany([results[0]._id, results[1]._id]);
+        console.log("soft deleted results count : ", res1.deletedCount);
+        //2nd 2 remove hard
+        let res2 = yield dbOpsSDTS.removeMany([results[2]._id, results[3]._id], true);
+        console.log("hard deleted results count : ", res2.deletedCount);
+        //try update soft deleted users
+        const updatedResults = yield dbOpsSDTS.updateMany(results.map((r, i) => (Object.assign(Object.assign({}, r), { name: "Updated " + i }))));
+        console.log("soft delete Updated Results length: ", updatedResults.modifiedCount, updatedResults);
+        // try to update soft deleted users by override
+        const updatedResults2 = yield dbOpsSDTS.updateMany(results.map((r, i) => (Object.assign(Object.assign({}, r), { name: "Updated " + i }))), {}, true);
+        console.log("hard delete Updated Results length: ", updatedResults2.modifiedCount, updatedResults2);
+        // paginate results with soft deleted
+        const paginatedResults = yield dbOpsSDTS.paginate([], [], {});
+        console.log("soft delete -> Paginated Results length: ", paginatedResults.data.length);
+        // paginate results without soft deleted
+        const paginatedResults2 = yield dbOpsSDTS.paginate([], [], {}, [], {}, true);
+        console.log("override soft delete -> Paginated Results length: ", paginatedResults2.data.length);
+        dbOpsSDTS.getClient().then(e => e.close());
     });
 }
 const dummyUsers = [
@@ -42,5 +53,39 @@ const dummyUsers = [
     {
         name: "Fahim Raz",
         company: "Sheba Innovations Ltd",
-    }
+    },
+    {
+        name: "Raihan Kabir",
+        company: "Sheba Innovations Ltd",
+    },
+    {
+        name: "Fatema Chowdhury",
+        company: "Sheba Innovations Ltd",
+    },
+    {
+        name: "Tanjil Chowdhury",
+        company: "Sheba Innovations Ltd",
+    },
+    {
+        name: "Sakib Chowdhury",
+        company: "Sheba Innovations Ltd",
+    },
+    {
+        name: "Sakib Chowdhury",
+        company: "Sheba Innovations Ltd",
+    },
+    {
+        name: "Sakib Chowdhury",
+        company: "Sheba Innovations Ltd",
+    },
+    {
+        name: "Sakib Chowdhury",
+        company: "Sheba Innovations Ltd",
+    },
+    {
+        name: "Sakib Chowdhury",
+        company: "Sheba Innovations Ltd",
+    },
 ];
+testSDTS();
+//close connection

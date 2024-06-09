@@ -1,6 +1,12 @@
 [mongo-baseops](../README.md) / [Exports](../modules.md) / default
 
-# Class: default
+# Class: default\<Type\>
+
+## Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `Type` | extends `WithSoftDelete`\<`WithTimeStamp`\<`Document`\>\> = `WithTimeStamp`\<`Document`\> |
 
 ## Table of contents
 
@@ -15,6 +21,7 @@
 - [client](default.md#client)
 - [collectionName](default.md#collectionname)
 - [dbName](default.md#dbname)
+- [dbOpsOption](default.md#dbopsoption)
 - [dbUrl](default.md#dburl)
 - [ObjectId](default.md#objectid)
 - [mongodb](default.md#mongodb)
@@ -25,6 +32,7 @@
 - [getCollection](default.md#getcollection)
 - [getDB](default.md#getdb)
 - [list](default.md#list)
+- [paginate](default.md#paginate)
 - [readMany](default.md#readmany)
 - [readOne](default.md#readone)
 - [removeMany](default.md#removemany)
@@ -38,7 +46,13 @@
 
 ### constructor
 
-• **new default**(`collectionName`, `dbName?`, `dbUrl?`): [`default`](default.md)
+• **new default**\<`Type`\>(`collectionName`, `dbName?`, `dbUrl?`, `dbOpsOption?`): [`default`](default.md)\<`Type`\>
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `Type` | extends `WithSoftDelete`\<`WithTimeStamp`\<`Document`\>\> = `WithTimeStamp`\<`Document`\> |
 
 #### Parameters
 
@@ -47,44 +61,45 @@
 | `collectionName` | `string` |
 | `dbName?` | `string` |
 | `dbUrl?` | `string` |
+| `dbOpsOption?` | `Partial`\<`DBOpsOption`\> |
 
 #### Returns
 
-[`default`](default.md)
+[`default`](default.md)\<`Type`\>
 
 #### Defined in
 
-[src/index.ts:18](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/486c2f80b33c7e9f88f8d4543cbdc072259014bf/src/index.ts#L18)
+[index.ts:31](https://github.com/imtiazchowdhury/mongo-baseops/blob/2f8f7fd825b8b9e3e58d1efe333e118dc6059946/src/index.ts#L31)
 
 ## Properties
 
 ### \_collection
 
-• `Private` **\_collection**: ``null`` \| [`Collection`](internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.Collection.md)\<[`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md)\>
+• `Private` **\_collection**: ``null`` \| `Collection`\<`Document`\>
 
 #### Defined in
 
-[src/index.ts:12](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/486c2f80b33c7e9f88f8d4543cbdc072259014bf/src/index.ts#L12)
+[index.ts:20](https://github.com/imtiazchowdhury/mongo-baseops/blob/2f8f7fd825b8b9e3e58d1efe333e118dc6059946/src/index.ts#L20)
 
 ___
 
 ### \_db
 
-• `Private` **\_db**: ``null`` \| [`Db`](internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.Db.md)
+• `Private` **\_db**: ``null`` \| `Db`
 
 #### Defined in
 
-[src/index.ts:8](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/486c2f80b33c7e9f88f8d4543cbdc072259014bf/src/index.ts#L8)
+[index.ts:16](https://github.com/imtiazchowdhury/mongo-baseops/blob/2f8f7fd825b8b9e3e58d1efe333e118dc6059946/src/index.ts#L16)
 
 ___
 
 ### client
 
-• **client**: ``null`` \| [`MongoClient`](internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.MongoClient.md)
+• **client**: ``null`` \| `MongoClient`
 
 #### Defined in
 
-[src/index.ts:13](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/486c2f80b33c7e9f88f8d4543cbdc072259014bf/src/index.ts#L13)
+[index.ts:21](https://github.com/imtiazchowdhury/mongo-baseops/blob/2f8f7fd825b8b9e3e58d1efe333e118dc6059946/src/index.ts#L21)
 
 ___
 
@@ -94,7 +109,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:9](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/486c2f80b33c7e9f88f8d4543cbdc072259014bf/src/index.ts#L9)
+[index.ts:17](https://github.com/imtiazchowdhury/mongo-baseops/blob/2f8f7fd825b8b9e3e58d1efe333e118dc6059946/src/index.ts#L17)
 
 ___
 
@@ -104,7 +119,17 @@ ___
 
 #### Defined in
 
-[src/index.ts:10](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/486c2f80b33c7e9f88f8d4543cbdc072259014bf/src/index.ts#L10)
+[index.ts:18](https://github.com/imtiazchowdhury/mongo-baseops/blob/2f8f7fd825b8b9e3e58d1efe333e118dc6059946/src/index.ts#L18)
+
+___
+
+### dbOpsOption
+
+• **dbOpsOption**: `DBOpsOption`
+
+#### Defined in
+
+[index.ts:26](https://github.com/imtiazchowdhury/mongo-baseops/blob/2f8f7fd825b8b9e3e58d1efe333e118dc6059946/src/index.ts#L26)
 
 ___
 
@@ -114,75 +139,75 @@ ___
 
 #### Defined in
 
-[src/index.ts:11](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/486c2f80b33c7e9f88f8d4543cbdc072259014bf/src/index.ts#L11)
+[index.ts:19](https://github.com/imtiazchowdhury/mongo-baseops/blob/2f8f7fd825b8b9e3e58d1efe333e118dc6059946/src/index.ts#L19)
 
 ___
 
 ### ObjectId
 
-▪ `Static` **ObjectId**: typeof [`ObjectId`](internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.ObjectId.md) = `ObjectId`
+▪ `Static` **ObjectId**: typeof `ObjectId` = `ObjectId`
 
 #### Defined in
 
-[src/index.ts:15](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/486c2f80b33c7e9f88f8d4543cbdc072259014bf/src/index.ts#L15)
+[index.ts:23](https://github.com/imtiazchowdhury/mongo-baseops/blob/2f8f7fd825b8b9e3e58d1efe333e118dc6059946/src/index.ts#L23)
 
 ___
 
 ### mongodb
 
-▪ `Static` **mongodb**: [`"Z:/mongo-baseOps/node_modules/mongodb/mongodb"`](../modules/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.md) = `mongodb`
+▪ `Static` **mongodb**: `__module` = `mongodb`
 
 #### Defined in
 
-[src/index.ts:16](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/486c2f80b33c7e9f88f8d4543cbdc072259014bf/src/index.ts#L16)
+[index.ts:24](https://github.com/imtiazchowdhury/mongo-baseops/blob/2f8f7fd825b8b9e3e58d1efe333e118dc6059946/src/index.ts#L24)
 
 ## Methods
 
 ### getClient
 
-▸ **getClient**(): `Promise`\<[`MongoClient`](internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.MongoClient.md)\>
+▸ **getClient**(): `Promise`\<`MongoClient`\>
 
 #### Returns
 
-`Promise`\<[`MongoClient`](internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.MongoClient.md)\>
+`Promise`\<`MongoClient`\>
 
 #### Defined in
 
-[src/index.ts:64](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/486c2f80b33c7e9f88f8d4543cbdc072259014bf/src/index.ts#L64)
+[index.ts:84](https://github.com/imtiazchowdhury/mongo-baseops/blob/2f8f7fd825b8b9e3e58d1efe333e118dc6059946/src/index.ts#L84)
 
 ___
 
 ### getCollection
 
-▸ **getCollection**(): `Promise`\<[`Collection`](internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.Collection.md)\<[`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md)\>\>
+▸ **getCollection**(): `Promise`\<`Collection`\<`Document`\>\>
 
 #### Returns
 
-`Promise`\<[`Collection`](internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.Collection.md)\<[`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md)\>\>
+`Promise`\<`Collection`\<`Document`\>\>
 
 #### Defined in
 
-[src/index.ts:54](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/486c2f80b33c7e9f88f8d4543cbdc072259014bf/src/index.ts#L54)
+[index.ts:74](https://github.com/imtiazchowdhury/mongo-baseops/blob/2f8f7fd825b8b9e3e58d1efe333e118dc6059946/src/index.ts#L74)
 
 ___
 
 ### getDB
 
-▸ **getDB**(): `Promise`\<[`Db`](internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.Db.md)\>
+▸ **getDB**(): `Promise`\<`Db`\>
 
 #### Returns
 
-`Promise`\<[`Db`](internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.Db.md)\>
+`Promise`\<`Db`\>
 
 #### Defined in
 
-[src/index.ts:44](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/486c2f80b33c7e9f88f8d4543cbdc072259014bf/src/index.ts#L44)
+[index.ts:64](https://github.com/imtiazchowdhury/mongo-baseops/blob/2f8f7fd825b8b9e3e58d1efe333e118dc6059946/src/index.ts#L64)
 
 ___
 
 ### list
 
-▸ **list**(`filter?`, `resolve?`, `paginationOptions`): `Promise`\<[`PaginateResult`](../interfaces/internal_.PaginateResult.md) \| [`EmptyPaginateResult`](../interfaces/internal_.EmptyPaginateResult.md)\>
+▸ **list**(`filter?`, `resolve?`, `paginationOptions`): `Promise`\<`PaginateResultWithType`\<`Type`\>\>
 
 #### Parameters
 
@@ -190,179 +215,210 @@ ___
 | :------ | :------ |
 | `filter` | `Object` |
 | `resolve` | `Object` |
-| `paginationOptions` | [`PaginationOptions`](../interfaces/internal_.PaginationOptions.md) |
+| `paginationOptions` | `PaginationOptions` |
 
 #### Returns
 
-`Promise`\<[`PaginateResult`](../interfaces/internal_.PaginateResult.md) \| [`EmptyPaginateResult`](../interfaces/internal_.EmptyPaginateResult.md)\>
+`Promise`\<`PaginateResultWithType`\<`Type`\>\>
 
 #### Defined in
 
-[src/index.ts:159](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/486c2f80b33c7e9f88f8d4543cbdc072259014bf/src/index.ts#L159)
+[index.ts:267](https://github.com/imtiazchowdhury/mongo-baseops/blob/2f8f7fd825b8b9e3e58d1efe333e118dc6059946/src/index.ts#L267)
+
+___
+
+### paginate
+
+▸ **paginate**(`prePagingState`, `postPagingStage`, `options`, `facet?`, `aggregateOptions?`, `listSoftDeleted?`): `Promise`\<`PaginateResultWithType`\<`WithTimeStamp`\<`WithId`\<`Type`\>\>\>\>
+
+#### Parameters
+
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `prePagingState` | `PipelineStage`[] | `undefined` |
+| `postPagingStage` | `PipelineStage`[] | `undefined` |
+| `options` | `PaginationOptions` | `undefined` |
+| `facet?` | `FacetBucketQuery`[] | `undefined` |
+| `aggregateOptions?` | `AggregateOptions` | `undefined` |
+| `listSoftDeleted` | `boolean` | `false` |
+
+#### Returns
+
+`Promise`\<`PaginateResultWithType`\<`WithTimeStamp`\<`WithId`\<`Type`\>\>\>\>
+
+#### Defined in
+
+[index.ts:320](https://github.com/imtiazchowdhury/mongo-baseops/blob/2f8f7fd825b8b9e3e58d1efe333e118dc6059946/src/index.ts#L320)
 
 ___
 
 ### readMany
 
-▸ **readMany**(`id`, `resolve?`): `Promise`\<[`WithId`](../modules/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.md#withid)\<[`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md)\>[]\>
+▸ **readMany**(`id`, `resolve?`, `readSoftDeleted?`): `Promise`\<`WithTimeStamp`\<`WithId`\<`Type`\>\>[]\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `id` | (`undefined` \| `string` \| [`ObjectId`](internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.ObjectId.md))[] |
-| `resolve` | [`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md) |
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `id` | (`undefined` \| `string` \| `ObjectId`)[] | `undefined` |
+| `resolve` | `Document` | `{}` |
+| `readSoftDeleted` | `boolean` | `false` |
 
 #### Returns
 
-`Promise`\<[`WithId`](../modules/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.md#withid)\<[`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md)\>[]\>
+`Promise`\<`WithTimeStamp`\<`WithId`\<`Type`\>\>[]\>
 
 #### Defined in
 
-[src/index.ts:144](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/486c2f80b33c7e9f88f8d4543cbdc072259014bf/src/index.ts#L144)
+[index.ts:239](https://github.com/imtiazchowdhury/mongo-baseops/blob/2f8f7fd825b8b9e3e58d1efe333e118dc6059946/src/index.ts#L239)
 
 ___
 
 ### readOne
 
-▸ **readOne**(`id`, `resolve?`): `Promise`\<``null`` \| [`WithId`](../modules/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.md#withid)\<[`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md)\>\>
+▸ **readOne**(`id`, `resolve?`, `readSoftDeleted?`): `Promise`\<``null`` \| `WithTimeStamp`\<`WithId`\<`Type`\>\>\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `id` | `string` \| [`ObjectId`](internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.ObjectId.md) |
-| `resolve` | [`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md) |
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `id` | `string` \| `ObjectId` | `undefined` |
+| `resolve` | `Document` | `{}` |
+| `readSoftDeleted` | `boolean` | `false` |
 
 #### Returns
 
-`Promise`\<``null`` \| [`WithId`](../modules/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.md#withid)\<[`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md)\>\>
+`Promise`\<``null`` \| `WithTimeStamp`\<`WithId`\<`Type`\>\>\>
 
 #### Defined in
 
-[src/index.ts:133](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/486c2f80b33c7e9f88f8d4543cbdc072259014bf/src/index.ts#L133)
+[index.ts:222](https://github.com/imtiazchowdhury/mongo-baseops/blob/2f8f7fd825b8b9e3e58d1efe333e118dc6059946/src/index.ts#L222)
 
 ___
 
 ### removeMany
 
-▸ **removeMany**(`idList`): `Promise`\<[`DeleteResult`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.DeleteResult.md)\>
+▸ **removeMany**(`idList`, `hardDelete?`): `Promise`\<`DeleteResult`\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `idList` | (`undefined` \| `string` \| [`ObjectId`](internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.ObjectId.md))[] |
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `idList` | (`undefined` \| `string` \| `ObjectId`)[] | `undefined` |
+| `hardDelete` | `boolean` | `false` |
 
 #### Returns
 
-`Promise`\<[`DeleteResult`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.DeleteResult.md)\>
+`Promise`\<`DeleteResult`\>
 
 #### Defined in
 
-[src/index.ts:181](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/486c2f80b33c7e9f88f8d4543cbdc072259014bf/src/index.ts#L181)
+[index.ts:300](https://github.com/imtiazchowdhury/mongo-baseops/blob/2f8f7fd825b8b9e3e58d1efe333e118dc6059946/src/index.ts#L300)
 
 ___
 
 ### removeOne
 
-▸ **removeOne**(`id`): `Promise`\<[`DeleteResult`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.DeleteResult.md)\>
+▸ **removeOne**(`id`, `hardDelete?`): `Promise`\<`DeleteResult`\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `id` | `undefined` \| `string` \| [`ObjectId`](internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.ObjectId.md) |
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `id` | `undefined` \| `string` \| `ObjectId` | `undefined` |
+| `hardDelete` | `boolean` | `false` |
 
 #### Returns
 
-`Promise`\<[`DeleteResult`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.DeleteResult.md)\>
+`Promise`\<`DeleteResult`\>
 
 #### Defined in
 
-[src/index.ts:176](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/486c2f80b33c7e9f88f8d4543cbdc072259014bf/src/index.ts#L176)
+[index.ts:284](https://github.com/imtiazchowdhury/mongo-baseops/blob/2f8f7fd825b8b9e3e58d1efe333e118dc6059946/src/index.ts#L284)
 
 ___
 
 ### updateMany
 
-▸ **updateMany**(`entityList`, `options?`): `Promise`\<[`UpdateResult`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.UpdateResult.md)\<[`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md)\>[]\>
+▸ **updateMany**(`entityList`, `options?`, `overrideSoftDeleted?`): `Promise`\<\{ `acknowledged`: `boolean` ; `matchedCount`: `number` ; `modifiedCount`: `number`  }\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `entityList` | [`OptionalId`](../modules/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.md#optionalid)\<[`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md)\>[] |
-| `options?` | [`UpdateOptions`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.UpdateOptions.md) |
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `entityList` | `WithId`\<`Type`\>[] | `undefined` |
+| `options?` | `UpdateOptions` | `undefined` |
+| `overrideSoftDeleted` | `boolean` | `false` |
 
 #### Returns
 
-`Promise`\<[`UpdateResult`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.UpdateResult.md)\<[`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md)\>[]\>
+`Promise`\<\{ `acknowledged`: `boolean` ; `matchedCount`: `number` ; `modifiedCount`: `number`  }\>
 
 #### Defined in
 
-[src/index.ts:105](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/486c2f80b33c7e9f88f8d4543cbdc072259014bf/src/index.ts#L105)
+[index.ts:171](https://github.com/imtiazchowdhury/mongo-baseops/blob/2f8f7fd825b8b9e3e58d1efe333e118dc6059946/src/index.ts#L171)
 
 ___
 
 ### updateOne
 
-▸ **updateOne**(`id`, `entity`, `options?`): `Promise`\<[`UpdateResult`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.UpdateResult.md)\<[`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md)\>\>
+▸ **updateOne**(`id`, `entity`, `options?`, `updateSoftDeletedItems?`): `Promise`\<`UpdateResult`\<`WithTimeStamp`\<`WithId`\<`Type`\>\>\>\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `id` | `string` \| [`ObjectId`](internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.ObjectId.md) |
-| `entity` | [`OptionalId`](../modules/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.md#optionalid)\<[`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md)\> |
-| `options?` | [`UpdateOptions`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.UpdateOptions.md) |
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `id` | `string` \| `ObjectId` | `undefined` |
+| `entity` | `OptionalId`\<`Type`\> | `undefined` |
+| `options?` | `UpdateOptions` | `undefined` |
+| `updateSoftDeletedItems` | `boolean` | `false` |
 
 #### Returns
 
-`Promise`\<[`UpdateResult`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.UpdateResult.md)\<[`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md)\>\>
+`Promise`\<`UpdateResult`\<`WithTimeStamp`\<`WithId`\<`Type`\>\>\>\>
 
 #### Defined in
 
-[src/index.ts:98](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/486c2f80b33c7e9f88f8d4543cbdc072259014bf/src/index.ts#L98)
+[index.ts:152](https://github.com/imtiazchowdhury/mongo-baseops/blob/2f8f7fd825b8b9e3e58d1efe333e118dc6059946/src/index.ts#L152)
 
 ___
 
 ### writeMany
 
-▸ **writeMany**(`docs`, `options?`): `Promise`\<[`OptionalId`](../modules/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.md#optionalid)\<[`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md)\>[]\>
+▸ **writeMany**(`docs`, `options?`): `Promise`\<`WithId`\<`WithTimeStamp`\<`Type`\>\>[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `docs` | [`OptionalId`](../modules/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.md#optionalid)\<[`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md)\>[] |
-| `options?` | [`BulkWriteOptions`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BulkWriteOptions.md) |
+| `docs` | `OptionalId`\<`Type`\>[] |
+| `options?` | `BulkWriteOptions` |
 
 #### Returns
 
-`Promise`\<[`OptionalId`](../modules/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.md#optionalid)\<[`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md)\>[]\>
+`Promise`\<`WithId`\<`WithTimeStamp`\<`Type`\>\>[]\>
 
 #### Defined in
 
-[src/index.ts:83](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/486c2f80b33c7e9f88f8d4543cbdc072259014bf/src/index.ts#L83)
+[index.ts:116](https://github.com/imtiazchowdhury/mongo-baseops/blob/2f8f7fd825b8b9e3e58d1efe333e118dc6059946/src/index.ts#L116)
 
 ___
 
 ### writeOne
 
-▸ **writeOne**(`doc`, `options?`): `Promise`\<[`OptionalId`](../modules/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.md#optionalid)\<[`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md)\>\>
+▸ **writeOne**(`doc`, `options?`): `Promise`\<`WithId`\<`WithTimeStamp`\<`Type`\>\>\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `doc` | [`OptionalId`](../modules/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.md#optionalid)\<[`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md)\> |
-| `options?` | [`InsertOneOptions`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.InsertOneOptions.md) |
+| `doc` | `OptionalId`\<`Type`\> |
+| `options?` | `InsertOneOptions` |
 
 #### Returns
 
-`Promise`\<[`OptionalId`](../modules/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.md#optionalid)\<[`Document`](../interfaces/internal_._Z__mongo_baseOps_node_modules_mongodb_mongodb_.BSON.Document.md)\>\>
+`Promise`\<`WithId`\<`WithTimeStamp`\<`Type`\>\>\>
 
 #### Defined in
 
-[src/index.ts:74](https://github.com/ImtiazChowdhury/mongo-baseOps/blob/486c2f80b33c7e9f88f8d4543cbdc072259014bf/src/index.ts#L74)
+[index.ts:94](https://github.com/imtiazchowdhury/mongo-baseops/blob/2f8f7fd825b8b9e3e58d1efe333e118dc6059946/src/index.ts#L94)

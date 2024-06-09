@@ -39,9 +39,16 @@ const mongopool_1 = __importDefault(require("@imtiazchowdhury/mongopool"));
 const mongodb_paginate_1 = __importDefault(require("mongodb-paginate"));
 const mongodb_1 = __importStar(require("mongodb"));
 class BaseDatabaseOps {
-    constructor(collectionName, dbName, dbUrl) {
+    constructor(collectionName, dbName, dbUrl, dbOpsOption) {
         this.dbName = null;
         this.dbUrl = null;
+        this.dbOpsOption = {
+            timestamps: true,
+            softDelete: true
+        };
+        if (dbOpsOption) {
+            this.dbOpsOption = Object.assign(Object.assign({}, this.dbOpsOption), dbOpsOption);
+        }
         if (!collectionName || typeof collectionName !== "string") {
             throw new TypeError("first argument collectionName must be string, received " + typeof collectionName);
         }
@@ -88,45 +95,88 @@ class BaseDatabaseOps {
     }
     writeOne(doc, options) {
         return __awaiter(this, void 0, void 0, function* () {
-            const writeResults = yield (yield this.getCollection()).insertOne(doc, options);
-            doc["_id"] = writeResults.insertedId;
-            return doc;
+            let entity = doc;
+            if (this.dbOpsOption.timestamps) {
+                entity.createdAt = new Date();
+                entity.lastUpdateAt = new Date();
+            }
+            if (this.dbOpsOption.softDelete) {
+                entity.deleted = false;
+                entity.deletedAt = null;
+            }
+            const writeResults = yield (yield this.getCollection()).insertOne(entity, options);
+            const result = Object.assign({ _id: writeResults.insertedId }, entity);
+            return result;
         });
     }
     writeMany(docs, options) {
         return __awaiter(this, void 0, void 0, function* () {
-            const writeResults = yield (yield this.getCollection()).insertMany(docs, options);
-            for (let key in writeResults.insertedIds) {
-                const id = writeResults.insertedIds[key];
-                const entity = docs[key];
-                if (entity && id) {
-                    entity["_id"] = id;
-                }
+            let entityList = docs;
+            if (this.dbOpsOption.timestamps) {
+                entityList = docs.map(doc => {
+                    return Object.assign(Object.assign({}, doc), { createdAt: new Date(), lastUpdateAt: new Date() });
+                });
             }
-            return docs;
+            if (this.dbOpsOption.softDelete) {
+                entityList = entityList.map(doc => {
+                    return Object.assign(Object.assign({}, doc), { deleted: false, deletedAt: null });
+                });
+            }
+            const writeResults = yield (yield this.getCollection()).insertMany(docs, options);
+            const resultList = entityList.map((doc, index) => {
+                return Object.assign({ _id: writeResults.insertedIds[index] }, doc);
+            });
+            return resultList;
         });
     }
-    updateOne(id, entity, options) {
-        return __awaiter(this, void 0, void 0, function* () {
+    updateOne(id_1, entity_1, options_1) {
+        return __awaiter(this, arguments, void 0, function* (id, entity, options, updateSoftDeletedItems = false) {
             delete entity._id;
-            const updateResults = yield (yield this.getCollection()).updateOne({ _id: new mongodb_1.ObjectId(id) }, { $set: entity }, options);
-            return updateResults;
+            if (this.dbOpsOption.timestamps) {
+                entity.lastUpdateAt = new Date();
+            }
+            if (updateSoftDeletedItems || !this.dbOpsOption.softDelete) {
+                const updateResults = yield (yield this.getCollection()).updateOne({ _id: new mongodb_1.ObjectId(id) }, { $set: entity }, options);
+                return updateResults;
+            }
+            else {
+                const updateResults = yield (yield this.getCollection()).updateOne({ _id: new mongodb_1.ObjectId(id), deleted: false }, { $set: entity }, options);
+                return updateResults;
+            }
         });
     }
-    updateMany(entityList, options) {
-        return __awaiter(this, void 0, void 0, function* () {
+    updateMany(entityList_1, options_1) {
+        return __awaiter(this, arguments, void 0, function* (entityList, options, overrideSoftDeleted = false) {
             const session = (yield this.getClient()).startSession();
             session.startTransaction();
             try {
                 const updatePromises = [];
                 for (let entity of entityList) {
                     const id = entity["_id"];
-                    delete entity["_id"]; // can  not update _id
+                    const entityWithoutId = entity;
+                    delete entityWithoutId["_id"]; // can  not update _id
                     const collection = yield this.getCollection();
-                    updatePromises.push(collection.updateOne({ _id: new mongodb_1.ObjectId(id) }, { $set: entity }, options));
+                    if (this.dbOpsOption.timestamps) {
+                        entityWithoutId.lastUpdateAt = new Date();
+                    }
+                    if (overrideSoftDeleted || !this.dbOpsOption.softDelete) {
+                        updatePromises.push(collection.updateOne({ _id: new mongodb_1.ObjectId(id) }, { $set: entityWithoutId }, options));
+                    }
+                    else {
+                        updatePromises.push(collection.updateOne({ _id: new mongodb_1.ObjectId(id), deleted: false }, { $set: entityWithoutId }, options));
+                    }
                 }
                 session.endSession();
-                return yield Promise.all(updatePromises);
+                const result = yield Promise.all(updatePromises);
+                // return update count
+                const modifiedCount = result.reduce((acc, curr) => acc + curr.modifiedCount, 0);
+                const acknowledgedCount = result.reduce((acc, curr) => acc + (curr.acknowledged ? 1 : 0), 0);
+                const matchedCount = result.reduce((acc, curr) => acc + curr.matchedCount, 0);
+                return {
+                    modifiedCount,
+                    acknowledged: acknowledgedCount === result.length,
+                    matchedCount
+                };
             }
             catch (err) {
                 session.abortTransaction();
@@ -136,29 +186,44 @@ class BaseDatabaseOps {
         });
     }
     readOne(id_1) {
-        return __awaiter(this, arguments, void 0, function* (id, resolve = {}) {
+        return __awaiter(this, arguments, void 0, function* (id, resolve = {}, readSoftDeleted = false) {
             // this is the bare minimum implementation
             // resolve will be different for each collection
             // so this method will have to be overridden if someone tries to resolve any property
             if (Object.keys(resolve).length) {
                 console.warn("base implementation doesn't respond to `resolve`. You need to override the `readOne` method for collection " + this.collectionName);
             }
-            const result = yield (yield this.getCollection()).findOne({ _id: new mongodb_1.ObjectId(id) });
-            return result;
+            if (readSoftDeleted || !this.dbOpsOption.softDelete) {
+                const result = yield (yield this.getCollection()).findOne({ _id: new mongodb_1.ObjectId(id) });
+                return result;
+            }
+            else {
+                const result = yield (yield this.getCollection()).findOne({ _id: new mongodb_1.ObjectId(id), deleted: false });
+                return result;
+            }
         });
     }
     readMany(id_1) {
-        return __awaiter(this, arguments, void 0, function* (id, resolve = {}) {
+        return __awaiter(this, arguments, void 0, function* (id, resolve = {}, readSoftDeleted = false) {
             // this is the bare minimum implementation
             // resolve will be different for each collection
             // so this method will have to be overridden if someone tries to resolve any property
             if (Object.keys(resolve).length) {
                 console.warn("base implementation doesn't respond to `resolve`. You need to override the `readMany` method for collection " + this.collectionName);
             }
-            const result = yield (yield this.getCollection()).find({
-                _id: { $in: id.map(i => new mongodb_1.ObjectId(i)) }
-            }).toArray();
-            return result;
+            if (readSoftDeleted || !this.dbOpsOption.softDelete) {
+                const result = yield (yield this.getCollection()).find({
+                    _id: { $in: id.map(i => new mongodb_1.ObjectId(i)) }
+                }).toArray();
+                return result;
+            }
+            else {
+                const result = yield (yield this.getCollection()).find({
+                    _id: { $in: id.map(i => new mongodb_1.ObjectId(i)) },
+                    deleted: false
+                }).toArray();
+                return result;
+            }
         });
     }
     list() {
@@ -172,22 +237,59 @@ class BaseDatabaseOps {
             if (Object.keys(resolve).length) {
                 console.warn("base implementation doesn't respond to `resolve`. You need to override the `list` method for collection " + this.collectionName);
             }
-            return yield (0, mongodb_paginate_1.default)(yield this.getCollection(), [], [], paginationOptions);
+            return yield this.paginate([], [], paginationOptions);
         });
     }
-    removeOne(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const deleteResult = (yield this.getCollection()).deleteOne({ _id: new mongodb_1.ObjectId(id) });
-            return deleteResult;
+    removeOne(id_1) {
+        return __awaiter(this, arguments, void 0, function* (id, hardDelete = false) {
+            if (hardDelete || !this.dbOpsOption.softDelete) {
+                const deleteResult = (yield this.getCollection()).deleteOne({ _id: new mongodb_1.ObjectId(id) });
+                return deleteResult;
+            }
+            else {
+                const updateDeleteResult = yield (yield this.getCollection()).updateOne({ _id: new mongodb_1.ObjectId(id) }, { $set: { deleted: true, deletedAt: new Date() } });
+                return {
+                    deletedCount: updateDeleteResult.modifiedCount,
+                    acknowledged: updateDeleteResult.acknowledged
+                };
+            }
         });
     }
-    removeMany(idList) {
-        return __awaiter(this, void 0, void 0, function* () {
+    removeMany(idList_1) {
+        return __awaiter(this, arguments, void 0, function* (idList, hardDelete = false) {
             if (!Array.isArray(idList)) {
                 throw new TypeError("idList must be an array, received " + typeof idList);
             }
-            const deleteResults = yield (yield this.getCollection()).deleteMany({ _id: { $in: idList.map(i => new mongodb_1.ObjectId(i)) } });
-            return deleteResults;
+            if (hardDelete || !this.dbOpsOption.softDelete) {
+                const deleteResults = yield (yield this.getCollection()).deleteMany({ _id: { $in: idList.map(i => new mongodb_1.ObjectId(i)) } });
+                return deleteResults;
+            }
+            else {
+                const collection = yield this.getCollection();
+                const updateDeleteResults = yield collection.updateMany({ _id: { $in: idList.map(i => new mongodb_1.ObjectId(i)) } }, { $set: { deleted: true, deletedAt: new Date() } });
+                return {
+                    deletedCount: updateDeleteResults.modifiedCount,
+                    acknowledged: updateDeleteResults.acknowledged
+                };
+            }
+        });
+    }
+    paginate(prePagingState_1, postPagingStage_1, options_1, facet_1, aggregateOptions_1) {
+        return __awaiter(this, arguments, void 0, function* (prePagingState, postPagingStage, options, facet, aggregateOptions, listSoftDeleted = false) {
+            if (listSoftDeleted || !this.dbOpsOption.softDelete) {
+                return yield (0, mongodb_paginate_1.default)(yield this.getCollection(), prePagingState, postPagingStage, options, facet, aggregateOptions);
+            }
+            else {
+                const newPrePagingState = [
+                    ...prePagingState,
+                    {
+                        $match: {
+                            deleted: false
+                        }
+                    }
+                ];
+                return yield (0, mongodb_paginate_1.default)(yield this.getCollection(), newPrePagingState, postPagingStage, options, facet, aggregateOptions);
+            }
         });
     }
 }

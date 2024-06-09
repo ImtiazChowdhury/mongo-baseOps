@@ -4,10 +4,6 @@
 
 ## Table of contents
 
-### Modules
-
-- [\<internal\>](modules/internal_.md)
-
 ### Classes
 
 - [default](classes/default.md)
