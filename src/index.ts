@@ -9,9 +9,10 @@ type DBOpsOption = {
 }
 
 type PaginateResultWithType<Type> = (PaginateResult & { data: Array<Type> }) | EmptyPaginateResult
-type WithTimeStamp<Type> = Type & { createdAt?: Date, updatedAt?: Date }
+type WithTimeStamp<Type> = Type & { createdAt?: Date, lastUpdateAt?: Date }
+type WithSoftDelete<Type> = Type & { deleted?: boolean, deletedAt?: Date | null }
 
-class BaseDatabaseOps<Type extends WithTimeStamp<Document> = WithTimeStamp<Document>> {
+class BaseDatabaseOps<Type extends WithSoftDelete<WithTimeStamp<Document>> = WithTimeStamp<Document>> {
     private _db: mongodb.Db | null;
     public collectionName: string;
     public dbName: string | null = null;
@@ -95,7 +96,12 @@ class BaseDatabaseOps<Type extends WithTimeStamp<Document> = WithTimeStamp<Docum
 
         if (this.dbOpsOption.timestamps) {
             entity.createdAt = new Date();
-            entity.updatedAt = new Date();
+            entity.lastUpdateAt = new Date();
+        }
+
+        if (this.dbOpsOption.softDelete) {
+            entity.deleted = false;
+            entity.deletedAt = null;
         }
 
         const writeResults = await (await this.getCollection()).insertOne(entity, options);
@@ -115,7 +121,16 @@ class BaseDatabaseOps<Type extends WithTimeStamp<Document> = WithTimeStamp<Docum
                 return {
                     ...doc,
                     createdAt: new Date(),
-                    updatedAt: new Date()
+                    lastUpdateAt: new Date()
+                }
+            })
+        }
+        if (this.dbOpsOption.softDelete) {
+            entityList = entityList.map(doc => {
+                return {
+                    ...doc,
+                    deleted: false,
+                    deletedAt: null
                 }
             })
         }
@@ -138,17 +153,17 @@ class BaseDatabaseOps<Type extends WithTimeStamp<Document> = WithTimeStamp<Docum
         id: string | ObjectId,
         entity: OptionalId<Type>,
         options?: mongodb.UpdateOptions,
-        overrideSoftDeleted = false
-    ) : Promise<UpdateResult<WithTimeStamp<WithId<Type>>>> {
+        updateSoftDeletedItems = false
+    ): Promise<UpdateResult<WithTimeStamp<WithId<Type>>>> {
         delete entity._id;
         if (this.dbOpsOption.timestamps) {
-            entity.updatedAt = new Date();
+            entity.lastUpdateAt = new Date();
         }
-        if (overrideSoftDeleted || !this.dbOpsOption.softDelete) {
+        if (updateSoftDeletedItems || !this.dbOpsOption.softDelete) {
             const updateResults = await (await this.getCollection()).updateOne({ _id: new ObjectId(id) }, { $set: entity }, options)
             return updateResults;
         } else {
-            const updateResults = await (await this.getCollection()).updateOne({ _id: new ObjectId(id), deleted: { $ne: true } }, { $set: entity }, options)
+            const updateResults = await (await this.getCollection()).updateOne({ _id: new ObjectId(id), deleted: false }, { $set: entity }, options)
             return updateResults;
         }
     }
@@ -166,24 +181,26 @@ class BaseDatabaseOps<Type extends WithTimeStamp<Document> = WithTimeStamp<Docum
             for (let entity of entityList) {
 
                 const id = entity["_id"];
-                // @ts-ignore
-                delete entity["_id"]; // can  not update _id
+
+                const entityWithoutId = entity as OptionalId<Type>;
+                delete entityWithoutId["_id"]; // can  not update _id
 
                 const collection = await this.getCollection();
                 if (this.dbOpsOption.timestamps) {
-                    entity.updatedAt = new Date();
+                    entityWithoutId.lastUpdateAt = new Date();
                 }
                 if (overrideSoftDeleted || !this.dbOpsOption.softDelete) {
                     updatePromises.push(
-                        collection.updateOne({ _id: new ObjectId(id) }, { $set: entity }, options)
+                        collection.updateOne({ _id: new ObjectId(id) }, { $set: entityWithoutId }, options)
                     )
                 } else {
                     updatePromises.push(
-                        collection.updateOne({ _id: new ObjectId(id), deleted: { $ne: true } }, { $set: entity }, options)
+                        collection.updateOne({ _id: new ObjectId(id), deleted: false }, { $set: entityWithoutId }, options)
                     )
                 }
             }
             session.endSession();
+
             const result = await Promise.all(updatePromises)
             // return update count
             const modifiedCount = result.reduce((acc, curr) => acc + curr.modifiedCount, 0);
@@ -202,7 +219,7 @@ class BaseDatabaseOps<Type extends WithTimeStamp<Document> = WithTimeStamp<Docum
         }
     }
 
-    async readOne(id: string | ObjectId, resolve: mongodb.Document = {}, OverrideSoftDeleted = false): Promise<WithTimeStamp<WithId<Type>> | null> {
+    async readOne(id: string | ObjectId, resolve: mongodb.Document = {}, readSoftDeleted = false): Promise<WithTimeStamp<WithId<Type>> | null> {
         // this is the bare minimum implementation
         // resolve will be different for each collection
         // so this method will have to be overridden if someone tries to resolve any property
@@ -210,11 +227,11 @@ class BaseDatabaseOps<Type extends WithTimeStamp<Document> = WithTimeStamp<Docum
         if (Object.keys(resolve).length) {
             console.warn("base implementation doesn't respond to `resolve`. You need to override the `readOne` method for collection " + this.collectionName)
         }
-        if (OverrideSoftDeleted || !this.dbOpsOption.softDelete) {
+        if (readSoftDeleted || !this.dbOpsOption.softDelete) {
             const result = await (await this.getCollection()).findOne({ _id: new ObjectId(id) });
             return result as WithTimeStamp<WithId<Type>> | null;
         } else {
-            const result = await (await this.getCollection()).findOne({ _id: new ObjectId(id), deleted: { $ne: true } });
+            const result = await (await this.getCollection()).findOne({ _id: new ObjectId(id), deleted: false });
             return result as WithTimeStamp<WithId<Type>> | null;
         }
     }
@@ -222,7 +239,7 @@ class BaseDatabaseOps<Type extends WithTimeStamp<Document> = WithTimeStamp<Docum
     async readMany(
         id: Array<string | ObjectId | undefined>,
         resolve: mongodb.Document = {},
-        overrideSoftDeleted = false
+        readSoftDeleted = false
     ): Promise<Array<WithTimeStamp<WithId<Type>>>> {
         // this is the bare minimum implementation
         // resolve will be different for each collection
@@ -231,7 +248,7 @@ class BaseDatabaseOps<Type extends WithTimeStamp<Document> = WithTimeStamp<Docum
         if (Object.keys(resolve).length) {
             console.warn("base implementation doesn't respond to `resolve`. You need to override the `readMany` method for collection " + this.collectionName)
         }
-        if (overrideSoftDeleted || !this.dbOpsOption.softDelete) {
+        if (readSoftDeleted || !this.dbOpsOption.softDelete) {
             const result = await (await this.getCollection()).find({
                 _id: { $in: id.map(i => new ObjectId(i)) }
             }
@@ -240,7 +257,7 @@ class BaseDatabaseOps<Type extends WithTimeStamp<Document> = WithTimeStamp<Docum
         } else {
             const result = await (await this.getCollection()).find({
                 _id: { $in: id.map(i => new ObjectId(i)) },
-                deleted: { $ne: true }
+                deleted: false
             }
             ).toArray();
             return result as Array<WithTimeStamp<WithId<Type>>>;
@@ -260,7 +277,7 @@ class BaseDatabaseOps<Type extends WithTimeStamp<Document> = WithTimeStamp<Docum
             console.warn("base implementation doesn't respond to `resolve`. You need to override the `list` method for collection " + this.collectionName)
         }
 
-        return await paginate(await this.getCollection(), [], [], paginationOptions) as PaginateResultWithType<Type>
+        return await this.paginate([], [], paginationOptions) as PaginateResultWithType<Type>
     }
 
 
@@ -269,8 +286,14 @@ class BaseDatabaseOps<Type extends WithTimeStamp<Document> = WithTimeStamp<Docum
             const deleteResult = (await this.getCollection()).deleteOne({ _id: new ObjectId(id) });
             return deleteResult;
         } else {
-            const updateDeleteResult = await (await this.getCollection()).updateOne({ _id: new ObjectId(id) }, { $set: { deleted: true, deletedAt: new Date() } })
-            return updateDeleteResult;
+            const updateDeleteResult = await (await this.getCollection()).updateOne(
+                { _id: new ObjectId(id) },
+                { $set: { deleted: true, deletedAt: new Date() } }
+            )
+            return {
+                deletedCount: updateDeleteResult.modifiedCount,
+                acknowledged: updateDeleteResult.acknowledged
+            };
         }
     }
 
@@ -283,7 +306,10 @@ class BaseDatabaseOps<Type extends WithTimeStamp<Document> = WithTimeStamp<Docum
             return deleteResults;
         } else {
             const collection = await this.getCollection()
-            const updateDeleteResults = await collection.updateMany({ _id: { $in: idList.map(i => new ObjectId(i)) } }, { $set: { deleted: true, deletedAt: new Date() } })
+            const updateDeleteResults = await collection.updateMany(
+                { _id: { $in: idList.map(i => new ObjectId(i)) } },
+                { $set: { deleted: true, deletedAt: new Date() } }
+            )
             return {
                 deletedCount: updateDeleteResults.modifiedCount,
                 acknowledged: updateDeleteResults.acknowledged
@@ -297,16 +323,16 @@ class BaseDatabaseOps<Type extends WithTimeStamp<Document> = WithTimeStamp<Docum
         options: PaginationOptions,
         facet?: FacetBucketQuery[],
         aggregateOptions?: mongodb.AggregateOptions,
-        overrideSoftDeleted = false
+        listSoftDeleted = false
     ): Promise<PaginateResultWithType<WithTimeStamp<WithId<Type>>>> {
-        if (overrideSoftDeleted || !this.dbOpsOption.softDelete) {
+        if (listSoftDeleted || !this.dbOpsOption.softDelete) {
             return await paginate(await this.getCollection(), prePagingState, postPagingStage, options, facet, aggregateOptions) as PaginateResultWithType<WithTimeStamp<WithId<Type>>>;
         } else {
             const newPrePagingState = [
                 ...prePagingState,
                 {
                     $match: {
-                        deleted: { $ne: true }
+                        deleted: false
                     }
                 }
             ]
