@@ -117,7 +117,7 @@ class BaseDatabaseOps<Type extends WithSoftDelete<WithTimeStamp<Document>> = Wit
         let entityList: Array<OptionalId<Type>> = docs;
 
         if (this.dbOpsOption.timestamps) {
-            entityList = docs.map(doc => {
+            entityList = entityList.map(doc => {
                 return {
                     ...doc,
                     createdAt: new Date(),
@@ -135,7 +135,7 @@ class BaseDatabaseOps<Type extends WithSoftDelete<WithTimeStamp<Document>> = Wit
             })
         }
 
-        const writeResults = await (await this.getCollection()).insertMany(docs, options);
+        const writeResults = await (await this.getCollection()).insertMany(entityList, options);
 
         const resultList = entityList.map((doc, index) => {
             return {
