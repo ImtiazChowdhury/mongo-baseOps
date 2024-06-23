@@ -113,7 +113,7 @@ class BaseDatabaseOps {
         return __awaiter(this, void 0, void 0, function* () {
             let entityList = docs;
             if (this.dbOpsOption.timestamps) {
-                entityList = docs.map(doc => {
+                entityList = entityList.map(doc => {
                     return Object.assign(Object.assign({}, doc), { createdAt: new Date(), lastUpdateAt: new Date() });
                 });
             }
@@ -122,7 +122,7 @@ class BaseDatabaseOps {
                     return Object.assign(Object.assign({}, doc), { deleted: false, deletedAt: null });
                 });
             }
-            const writeResults = yield (yield this.getCollection()).insertMany(docs, options);
+            const writeResults = yield (yield this.getCollection()).insertMany(entityList, options);
             const resultList = entityList.map((doc, index) => {
                 return Object.assign({ _id: writeResults.insertedIds[index] }, doc);
             });
