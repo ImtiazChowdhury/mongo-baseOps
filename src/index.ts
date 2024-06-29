@@ -372,7 +372,7 @@ class BaseDatabaseOps<Type extends WithSoftDelete<WithTimeStamp<Document>> = Wit
     }
 
 
-    async find(filter?: Filter<Type>, findOptions?: FindOptions) {
+    private async findInternal(filter?: Filter<Type>, findOptions?: FindOptions) {
         const collection = await this.getCollection()
         if (filter && findOptions) {
             const cursor = await collection.find(filter, findOptions);
@@ -383,6 +383,18 @@ class BaseDatabaseOps<Type extends WithSoftDelete<WithTimeStamp<Document>> = Wit
         } else {
             const cursor = await collection.find();
             return cursor.toArray()
+        }
+    }
+
+    async find(filter?: Filter<Type>, findOptions?: FindOptions, listSoftDeleted = false) {
+        if (listSoftDeleted || !this.dbOpsOption.softDelete) {
+            return await this.findInternal(filter, findOptions)
+        } else {
+            if (!filter) {
+                filter = {}
+            }
+            (filter as any).deleted = false;
+            return await this.findInternal(filter, findOptions)
         }
     }
 }
