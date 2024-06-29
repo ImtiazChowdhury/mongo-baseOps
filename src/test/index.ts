@@ -17,6 +17,10 @@ const dbOpsSDTS = new BaseDatabaseOps<User>("user", "baseOpsTest[sdts]", "mongod
 async function testSDTS() {
     const results = await dbOpsSDTS.writeMany(dummyUsers);
     console.log("Results: ", results[0], " total created length: ", results.length);
+    const collection = await dbOpsSDTS.getCollection()
+    collection.findOne({
+        company: "Sheba Innovations Ltd"
+    })
 
     //check type
     results[0].name, results[0].company, results[0]._id, results[0].createdAt
