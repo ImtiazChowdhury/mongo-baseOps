@@ -116,7 +116,7 @@ class BaseDatabaseOps<Type extends WithSoftDelete<WithTimeStamp<Document>> = Wit
     }
 
 
-    async writeOne(doc: OptionalId<Type>, options?: mongodb.InsertOneOptions): Promise<WithId<WithTimeStamp<Type>>> {
+    async writeOne(doc: Partial<OptionalId<Type>>, options?: mongodb.InsertOneOptions): Promise<WithId<WithTimeStamp<Type>>> {
         let entity = doc;
 
         if (this.dbOpsOption.timestamps) {
@@ -138,8 +138,8 @@ class BaseDatabaseOps<Type extends WithSoftDelete<WithTimeStamp<Document>> = Wit
     }
 
 
-    async writeMany(docs: Array<OptionalId<Type>>, options?: mongodb.BulkWriteOptions): Promise<WithId<WithTimeStamp<Type>>[]> {
-        let entityList: Array<OptionalId<Type>> = docs;
+    async writeMany(docs: Array<Partial<OptionalId<Type>>>, options?: mongodb.BulkWriteOptions): Promise<WithId<WithTimeStamp<Type>>[]> {
+        let entityList: Array<Partial<OptionalId<Type>>> = docs;
 
         if (this.dbOpsOption.timestamps) {
             entityList = entityList.map(doc => {
