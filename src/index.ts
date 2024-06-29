@@ -1,5 +1,5 @@
 import client from "@imtiazchowdhury/mongopool";
-import paginate, {PipelineStage} from "mongodb-paginate";
+import paginate, { PipelineStage } from "mongodb-paginate";
 import mongodb, {
     ObjectId,
     Document,
@@ -8,7 +8,6 @@ import mongodb, {
     UpdateResult,
     Filter,
     FindOptions,
-    OptionalUnlessRequiredId,
 } from "mongodb"
 import {
     EmptyPaginateResult,
@@ -186,13 +185,13 @@ class BaseDatabaseOps<Type extends WithSoftDelete<WithTimeStamp<Document>> = Wit
             entity.lastUpdateAt = new Date();
         }
         if (updateSoftDeletedItems || !this.dbOpsOption.softDelete) {
-            const updateResults = await collection.updateOne({_id: new ObjectId(id)}, {$set: entity}, options)
+            const updateResults = await collection.updateOne({ _id: new ObjectId(id) }, { $set: entity }, options)
             return updateResults;
         } else {
             const updateResults = await collection.updateOne({
                 _id: new ObjectId(id),
                 deleted: false
-            }, {$set: entity}, options)
+            }, { $set: entity }, options)
             return updateResults;
         }
     }
@@ -220,11 +219,11 @@ class BaseDatabaseOps<Type extends WithSoftDelete<WithTimeStamp<Document>> = Wit
                 }
                 if (overrideSoftDeleted || !this.dbOpsOption.softDelete) {
                     updatePromises.push(
-                        collection.updateOne({_id: new ObjectId(id)}, {$set: entityWithoutId}, options)
+                        collection.updateOne({ _id: new ObjectId(id) }, { $set: entityWithoutId }, options)
                     )
                 } else {
                     updatePromises.push(
-                        collection.updateOne({_id: new ObjectId(id), deleted: false}, {$set: entityWithoutId}, options)
+                        collection.updateOne({ _id: new ObjectId(id), deleted: false }, { $set: entityWithoutId }, options)
                     )
                 }
             }
@@ -258,10 +257,10 @@ class BaseDatabaseOps<Type extends WithSoftDelete<WithTimeStamp<Document>> = Wit
             console.warn("base implementation doesn't respond to `resolve`. You need to override the `readOne` method for collection " + this.collectionName)
         }
         if (readSoftDeleted || !this.dbOpsOption.softDelete) {
-            const result = await collection.findOne({_id: new ObjectId(id)});
+            const result = await collection.findOne({ _id: new ObjectId(id) });
             return result as WithTimeStamp<WithId<Type>> | null;
         } else {
-            const result = await collection.findOne({_id: new ObjectId(id), deleted: false});
+            const result = await collection.findOne({ _id: new ObjectId(id), deleted: false });
             return result as WithTimeStamp<WithId<Type>> | null;
         }
     }
@@ -281,15 +280,15 @@ class BaseDatabaseOps<Type extends WithSoftDelete<WithTimeStamp<Document>> = Wit
         }
         if (readSoftDeleted || !this.dbOpsOption.softDelete) {
             const result = await collection.find({
-                    _id: {$in: id.map(i => new ObjectId(i))}
-                }
+                _id: { $in: id.map(i => new ObjectId(i)) }
+            }
             ).toArray();
             return result as Array<WithTimeStamp<WithId<Type>>>;
         } else {
             const result = await collection.find({
-                    _id: {$in: id.map(i => new ObjectId(i))},
-                    deleted: false
-                }
+                _id: { $in: id.map(i => new ObjectId(i)) },
+                deleted: false
+            }
             ).toArray();
             return result as Array<WithTimeStamp<WithId<Type>>>;
         }
@@ -315,12 +314,12 @@ class BaseDatabaseOps<Type extends WithSoftDelete<WithTimeStamp<Document>> = Wit
     async removeOne(id: string | ObjectId | undefined, hardDelete = false) {
         const collection = await this.getInternalCollection();
         if (hardDelete || !this.dbOpsOption.softDelete) {
-            const deleteResult = await collection.deleteOne({_id: new ObjectId(id)});
+            const deleteResult = await collection.deleteOne({ _id: new ObjectId(id) });
             return deleteResult;
         } else {
             const updateDeleteResult = await collection.updateOne(
-                {_id: new ObjectId(id)},
-                {$set: {deleted: true, deletedAt: new Date()}}
+                { _id: new ObjectId(id) },
+                { $set: { deleted: true, deletedAt: new Date() } }
             )
             return {
                 deletedCount: updateDeleteResult.modifiedCount,
@@ -335,12 +334,12 @@ class BaseDatabaseOps<Type extends WithSoftDelete<WithTimeStamp<Document>> = Wit
             throw new TypeError("idList must be an array, received " + typeof idList)
         }
         if (hardDelete || !this.dbOpsOption.softDelete) {
-            const deleteResults = await collection.deleteMany({_id: {$in: idList.map(i => new ObjectId(i))}});
+            const deleteResults = await collection.deleteMany({ _id: { $in: idList.map(i => new ObjectId(i)) } });
             return deleteResults;
         } else {
             const updateDeleteResults = await collection.updateMany(
-                {_id: {$in: idList.map(i => new ObjectId(i))}},
-                {$set: {deleted: true, deletedAt: new Date()}}
+                { _id: { $in: idList.map(i => new ObjectId(i)) } },
+                { $set: { deleted: true, deletedAt: new Date() } }
             )
             return {
                 deletedCount: updateDeleteResults.modifiedCount,
