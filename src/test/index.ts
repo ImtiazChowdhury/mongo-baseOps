@@ -1,8 +1,4 @@
-// import mongoClient from "@imtiazchowdhury/mongopool";
-import BaseDatabaseOps from "..";
-
-// mongoClient.url = "mongodb://localhost:27017";
-// mongoClient.dbName = "baseOpsTest";
+import BaseDatabaseOps from "./../index";
 
 type User = {
     name: string,
@@ -14,14 +10,11 @@ const dbOpsSDTS = new BaseDatabaseOps<User>("user", "baseOpsTest[sdts]", "mongod
     timestamps: true
 })
 
+
+
 async function testSDTS() {
     const results = await dbOpsSDTS.writeMany(dummyUsers);
     console.log("Results: ", results[0], " total created length: ", results.length);
-    const collection = await dbOpsSDTS.getCollection()
-    collection.findOne({
-        company: "Sheba Innovations Ltd"
-    })
-
     //check type
     results[0].name, results[0].company, results[0]._id, results[0].createdAt
     //delete first 2 users
@@ -45,7 +38,10 @@ async function testSDTS() {
     const paginatedResults2 = await dbOpsSDTS.paginate([], [], {}, [], {}, true);
     console.log("override soft delete -> Paginated Results length: ", paginatedResults2.data.length);
     
-    
+    //finde with soft deleted
+    const foundResults = await dbOpsSDTS.find({name: "Updated 0"});
+    console.log("soft delete -> Found Results length: ", foundResults.length);
+
     dbOpsSDTS.getClient().then(e=> e.close())
 }
 
