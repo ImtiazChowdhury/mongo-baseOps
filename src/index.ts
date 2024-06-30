@@ -9,6 +9,7 @@ import mongodb, {
     Filter,
     FindOptions,
 } from "mongodb"
+
 import {
     EmptyPaginateResult,
     FacetBucketQuery,
@@ -385,8 +386,27 @@ class BaseDatabaseOps<Type extends WithSoftDelete<WithTimeStamp<Document>> = Wit
             return cursor.toArray()
         }
     }
+     
+    private async findOneInternal(filter?: Filter<Type>, findOptions?: FindOptions) {
+        const collection = await this.getCollection()
+        if (filter && findOptions) {
+            const cursor = await collection.findOne(filter, findOptions);
+            return 
+    }
 
     async find(filter?: Filter<Type>, findOptions?: FindOptions, listSoftDeleted = false) {
+        if (listSoftDeleted || !this.dbOpsOption.softDelete) {
+            return await this.findInternal(filter, findOptions)
+        } else {
+            if (!filter) {
+                filter = {}
+            }
+            (filter as any).deleted = false;
+            return await this.findInternal(filter, findOptions)
+        }
+    }
+
+    async findOne(filter?: Filter<Type>, findOptions?: FindOptions, listSoftDeleted = false) {
         if (listSoftDeleted || !this.dbOpsOption.softDelete) {
             return await this.findInternal(filter, findOptions)
         } else {

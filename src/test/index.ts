@@ -33,13 +33,14 @@ async function testSDTS() {
     // paginate results with soft deleted
     const paginatedResults = await dbOpsSDTS.paginate([], [], {});
     console.log("soft delete -> Paginated Results length: ", paginatedResults.data.length);
-
+    
+    
     // paginate results without soft deleted
     const paginatedResults2 = await dbOpsSDTS.paginate([], [], {}, [], {}, true);
     console.log("override soft delete -> Paginated Results length: ", paginatedResults2.data.length);
     
     //finde with soft deleted
-    const foundResults = await dbOpsSDTS.find({name: "Updated 0"});
+    const foundResults = await dbOpsSDTS.find();
     console.log("soft delete -> Found Results length: ", foundResults.length);
 
     dbOpsSDTS.getClient().then(e=> e.close())
