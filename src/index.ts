@@ -8,6 +8,8 @@ import mongodb, {
     UpdateResult,
     Filter,
     FindOptions,
+    OptionalUnlessRequiredId,
+    MatchKeysAndValues,
 } from "mongodb"
 
 import {
@@ -84,20 +86,6 @@ class BaseDatabaseOps<Type extends WithSoftDelete<WithTimeStamp<Document>> = Wit
         return this._db;
     }
 
-
-    // this is for internal use only
-    // the collection on this class has type of mongodb.Collection<Type>
-    // but the collection object from mongodb has type of mongodb.Collection
-    // so on creation, update and other operation need mongodb specific type
-    // current project mismatch the type of collection object
-    // eg-> on create my Project uses OptionalId<Type> but mongodb uses OptionalUnlessRequiredId<Type>
-    private async getInternalCollection() {
-        if (!this._collection) {
-            this._collection = await (await this.getDB()).collection(this.collectionName)
-        }
-        return this._collection as unknown as mongodb.Collection;
-    }
-
     // can't write this.db.collection(this.collectionName) everywhere
     async getCollection() {
         //wait until first query attempt is made before storing collection object
@@ -118,7 +106,7 @@ class BaseDatabaseOps<Type extends WithSoftDelete<WithTimeStamp<Document>> = Wit
 
 
     async writeOne(doc: OptionalId<Type>, options?: mongodb.InsertOneOptions): Promise<WithId<WithTimeStamp<Type>>> {
-        let entity = doc;
+        let entity = doc as OptionalUnlessRequiredId<Type>;
 
         if (this.dbOpsOption.timestamps) {
             entity.createdAt = new Date();
@@ -130,7 +118,9 @@ class BaseDatabaseOps<Type extends WithSoftDelete<WithTimeStamp<Document>> = Wit
             entity.deletedAt = null;
         }
 
-        const writeResults = await (await this.getInternalCollection()).insertOne(entity, options);
+        const collection = await this.getCollection()
+
+        const writeResults = await collection.insertOne(entity, options);
         const result = {
             _id: writeResults.insertedId,
             ...entity,
@@ -140,7 +130,7 @@ class BaseDatabaseOps<Type extends WithSoftDelete<WithTimeStamp<Document>> = Wit
 
 
     async writeMany(docs: Array<OptionalId<Type>>, options?: mongodb.BulkWriteOptions): Promise<WithId<WithTimeStamp<Type>>[]> {
-        let entityList: Array<OptionalId<Type>> = docs;
+        let entityList = docs as Array<OptionalUnlessRequiredId<Type>>;
 
         if (this.dbOpsOption.timestamps) {
             entityList = entityList.map(doc => {
@@ -161,7 +151,8 @@ class BaseDatabaseOps<Type extends WithSoftDelete<WithTimeStamp<Document>> = Wit
             })
         }
 
-        const writeResults = await (await this.getInternalCollection()).insertMany(entityList, options);
+        const collection = await this.getCollection();
+        const writeResults = await collection.insertMany(entityList, options);
 
         const resultList = entityList.map((doc, index) => {
             return {
@@ -176,34 +167,41 @@ class BaseDatabaseOps<Type extends WithSoftDelete<WithTimeStamp<Document>> = Wit
 
     async updateOne(
         id: string | ObjectId,
-        entity: OptionalId<Type>,
+        entity: Partial<Type>,
         options?: mongodb.UpdateOptions,
         updateSoftDeletedItems = false
-    ): Promise<UpdateResult<WithTimeStamp<WithId<Type>>>> {
-        const collection = await this.getInternalCollection();
-        delete entity._id;
+    ): Promise<UpdateResult<Type>> {
+
+        const collection = await this.getCollection();
+
         if (this.dbOpsOption.timestamps) {
             entity.lastUpdateAt = new Date();
         }
+
+        const entityWithoutId = entity as MatchKeysAndValues<Type>
+        delete entityWithoutId["_id"]; // can  not update _id
+
+
         if (updateSoftDeletedItems || !this.dbOpsOption.softDelete) {
-            const updateResults = await collection.updateOne({ _id: new ObjectId(id) }, { $set: entity }, options)
+            const updateResults = await collection.updateOne({ _id: new ObjectId(id) } as Filter<Type>, { $set: entityWithoutId }, options)
             return updateResults;
         } else {
             const updateResults = await collection.updateOne({
                 _id: new ObjectId(id),
                 deleted: false
-            }, { $set: entity }, options)
+            } as Filter<Type>, { $set: entityWithoutId }, options)
             return updateResults;
         }
     }
 
     async updateMany(
-        entityList: Array<WithId<Type>>,
+        entityList: Array<WithId<Partial<Type>>>,
         options?: mongodb.UpdateOptions,
         overrideSoftDeleted = false
     ) {
         const session = (await this.getClient()).startSession();
         session.startTransaction();
+        const collection = await this.getCollection();
 
         try {
             const updatePromises = []
@@ -211,20 +209,21 @@ class BaseDatabaseOps<Type extends WithSoftDelete<WithTimeStamp<Document>> = Wit
 
                 const id = entity["_id"];
 
-                const entityWithoutId = entity as OptionalId<Type>;
-                delete entityWithoutId["_id"]; // can  not update _id
-
-                const collection = await this.getInternalCollection();
                 if (this.dbOpsOption.timestamps) {
-                    entityWithoutId.lastUpdateAt = new Date();
+                    entity["lastUpdateAt"] = new Date();
                 }
+
+                const entityWithoutId = entity as MatchKeysAndValues<Type>;
+                delete entityWithoutId["_id"];
+
+
                 if (overrideSoftDeleted || !this.dbOpsOption.softDelete) {
                     updatePromises.push(
-                        collection.updateOne({ _id: new ObjectId(id) }, { $set: entityWithoutId }, options)
+                        collection.updateOne({ _id: new ObjectId(id) } as Filter<Type>, { $set: entityWithoutId }, options)
                     )
                 } else {
                     updatePromises.push(
-                        collection.updateOne({ _id: new ObjectId(id), deleted: false }, { $set: entityWithoutId }, options)
+                        collection.updateOne({ _id: new ObjectId(id), deleted: false } as Filter<Type>, { $set: entityWithoutId }, options)
                     )
                 }
             }
@@ -252,18 +251,13 @@ class BaseDatabaseOps<Type extends WithSoftDelete<WithTimeStamp<Document>> = Wit
         // this is the bare minimum implementation
         // resolve will be different for each collection
         // so this method will have to be overridden if someone tries to resolve any property
-        const collection = await this.getInternalCollection();
-
         if (Object.keys(resolve).length) {
             console.warn("base implementation doesn't respond to `resolve`. You need to override the `readOne` method for collection " + this.collectionName)
         }
-        if (readSoftDeleted || !this.dbOpsOption.softDelete) {
-            const result = await collection.findOne({ _id: new ObjectId(id) });
-            return result as WithTimeStamp<WithId<Type>> | null;
-        } else {
-            const result = await collection.findOne({ _id: new ObjectId(id), deleted: false });
-            return result as WithTimeStamp<WithId<Type>> | null;
-        }
+
+        return await this.findOne({
+            _id: new ObjectId(id)
+        } as Filter<Type>, {}, readSoftDeleted) as WithTimeStamp<WithId<Type>> | null;
     }
 
     async readMany(
@@ -274,25 +268,12 @@ class BaseDatabaseOps<Type extends WithSoftDelete<WithTimeStamp<Document>> = Wit
         // this is the bare minimum implementation
         // resolve will be different for each collection
         // so this method will have to be overridden if someone tries to resolve any property
-        const collection = await this.getInternalCollection();
-
         if (Object.keys(resolve).length) {
             console.warn("base implementation doesn't respond to `resolve`. You need to override the `readMany` method for collection " + this.collectionName)
         }
-        if (readSoftDeleted || !this.dbOpsOption.softDelete) {
-            const result = await collection.find({
-                _id: { $in: id.map(i => new ObjectId(i)) }
-            }
-            ).toArray();
-            return result as Array<WithTimeStamp<WithId<Type>>>;
-        } else {
-            const result = await collection.find({
-                _id: { $in: id.map(i => new ObjectId(i)) },
-                deleted: false
-            }
-            ).toArray();
-            return result as Array<WithTimeStamp<WithId<Type>>>;
-        }
+        return await this.find({
+            _id: { $in: id.map(i => new ObjectId(i)) }
+        } as Filter<Type>, {}, readSoftDeleted)
     }
 
     async list(filter = {}, resolve = {}, paginationOptions: PaginationOptions): Promise<PaginateResultWithType<Type>> {
@@ -312,15 +293,15 @@ class BaseDatabaseOps<Type extends WithSoftDelete<WithTimeStamp<Document>> = Wit
     }
 
 
-    async removeOne(id: string | ObjectId | undefined, hardDelete = false) {
-        const collection = await this.getInternalCollection();
+    async removeOne(id: string | ObjectId, hardDelete = false) {
+        const collection = await this.getCollection();
         if (hardDelete || !this.dbOpsOption.softDelete) {
-            const deleteResult = await collection.deleteOne({ _id: new ObjectId(id) });
+            const deleteResult = await collection.deleteOne({ _id: new ObjectId(id) } as Filter<Type>);
             return deleteResult;
         } else {
-            const updateDeleteResult = await collection.updateOne(
-                { _id: new ObjectId(id) },
-                { $set: { deleted: true, deletedAt: new Date() } }
+            const updateDeleteResult = await this.updateOne(
+                id,
+                { deleted: true, deletedAt: new Date() } as Partial<Type>
             )
             return {
                 deletedCount: updateDeleteResult.modifiedCount,
@@ -329,23 +310,35 @@ class BaseDatabaseOps<Type extends WithSoftDelete<WithTimeStamp<Document>> = Wit
         }
     }
 
-    async removeMany(idList: Array<string | ObjectId | undefined>, hardDelete = false): Promise<mongodb.DeleteResult> {
-        const collection = await this.getInternalCollection();
-        if (!Array.isArray(idList)) {
-            throw new TypeError("idList must be an array, received " + typeof idList)
-        }
-        if (hardDelete || !this.dbOpsOption.softDelete) {
-            const deleteResults = await collection.deleteMany({ _id: { $in: idList.map(i => new ObjectId(i)) } });
-            return deleteResults;
+    async removeMany(query: Filter<Type>, hardDelete?: boolean): Promise<mongodb.DeleteResult>;
+    async removeMany(idList: Array<string | ObjectId | undefined>, hardDelete?: boolean): Promise<mongodb.DeleteResult>;
+    async removeMany(queryOrIdList: Array<string | ObjectId | undefined> | Filter<Type>, hardDelete = false): Promise<mongodb.DeleteResult> {
+        const collection = await this.getCollection();
+        let filter: Filter<Type>;
+    
+        if (Array.isArray(queryOrIdList)) {
+            // When idList is an array, construct a filter to match documents by _id
+            filter = { _id: { $in: queryOrIdList.map(i => i ? new ObjectId(i) : null) } } as Filter<Type>;
+        } else if (typeof queryOrIdList === 'object') {
+            // When queryOrIdList is a filter object, use it directly
+            filter = queryOrIdList;
         } else {
+            throw new TypeError("First argument must be an array or a filter object, received " + typeof queryOrIdList);
+        }
+    
+        if (hardDelete || !this.dbOpsOption.softDelete) {
+            // Perform hard delete
+            return await collection.deleteMany(filter);
+        } else {
+            // Perform soft delete by updating the document
             const updateDeleteResults = await collection.updateMany(
-                { _id: { $in: idList.map(i => new ObjectId(i)) } },
-                { $set: { deleted: true, deletedAt: new Date() } }
-            )
+                filter,
+                { $set: { deleted: true, deletedAt: new Date() } as Partial<Type> }
+            );
             return {
                 deletedCount: updateDeleteResults.modifiedCount,
                 acknowledged: updateDeleteResults.acknowledged
-            }
+            };
         }
     }
 
@@ -361,68 +354,54 @@ class BaseDatabaseOps<Type extends WithSoftDelete<WithTimeStamp<Document>> = Wit
             return await paginate(await this.getCollection(), prePagingState, postPagingStage, options, facet, aggregateOptions) as PaginateResultWithType<WithTimeStamp<WithId<Type>>>;
         } else {
             const newPrePagingState = [
-                ...prePagingState,
                 {
                     $match: {
                         deleted: false
                     }
-                }
+                }, 
+                ...prePagingState                
             ]
             return await paginate(await this.getCollection(), newPrePagingState, postPagingStage, options, facet, aggregateOptions) as PaginateResultWithType<WithTimeStamp<WithId<Type>>>
         }
     }
 
-
-    private async findInternal(filter?: Filter<Type>, findOptions?: FindOptions) {
-        const collection = await this.getCollection()
-        if (filter && findOptions) {
-            const cursor = await collection.find(filter, findOptions);
-            return cursor.toArray()
-        } else if (filter) {
-            const cursor = await collection.find(filter);
-            return cursor.toArray()
-        } else {
-            const cursor = await collection.find();
-            return cursor.toArray()
-        }
-    }
-
-    private async findOneInternal(filter?: Filter<Type>, findOptions?: FindOptions) {
-        const collection = await this.getCollection()
-        if (filter && findOptions) {
-            const entity = await collection.findOne(filter, findOptions);
-            return entity
-        } else if (filter) {
-            const entity = await collection
-                .findOne(filter);
-            return entity
-        } else {
-            const entity = await collection.findOne();
-            return entity
-        }
-    }
-
-    async find(filter?: Filter<Type>, findOptions?: FindOptions, listSoftDeleted = false) {
+    async find(filter: Filter<Type> = {}, findOptions: FindOptions = {}, listSoftDeleted = false) {
+        const collection = await this.getCollection();
         if (listSoftDeleted || !this.dbOpsOption.softDelete) {
-            return await this.findInternal(filter, findOptions)
+            const resultCursor = collection.find(filter, findOptions)
+            return await resultCursor.toArray();
         } else {
-            if (!filter) {
-                filter = {}
-            }
-            (filter as any).deleted = false;
-            return await this.findInternal(filter, findOptions)
+            filter = { ...filter, deleted: false };
+            const resultCursor = collection.find(filter, findOptions);
+            return await resultCursor.toArray();
         }
     }
 
-    async findOne(filter?: Filter<Type>, findOptions?: FindOptions, listSoftDeleted = false) {
+    async findOne(filter: Filter<Type> = {}, findOptions: FindOptions = {}, listSoftDeleted = false) {
+        const collection = await this.getCollection();
         if (listSoftDeleted || !this.dbOpsOption.softDelete) {
-            return await this.findOneInternal(filter, findOptions)
+            return await collection.findOne(filter, findOptions)
         } else {
-            if (!filter) {
-                filter = {}
-            }
-            (filter as any).deleted = false;
-            return await this.findOneInternal(filter, findOptions)
+            filter = { ...filter, deleted: true }
+            return await collection.findOne(filter, findOptions)
+        }
+    }
+
+
+    async findAndUpdate(filter: Filter<Type>, update: Partial<Type>, options?: mongodb.UpdateOptions, updateSoftDeletedItems = false) {
+        const collection = await this.getCollection();
+
+        if (this.dbOpsOption.timestamps) {
+            update.lastUpdateAt = new Date();
+        }
+
+        const entityWithoutId = update as MatchKeysAndValues<Type>;
+        delete entityWithoutId["_id"]; // can  not update _id
+
+        if (updateSoftDeletedItems || !this.dbOpsOption.softDelete) {
+            return await collection.updateMany(filter, { $set: entityWithoutId }, options)
+        } else {
+            return await collection.updateMany({ ...filter, deleted: false } as Filter<Type>, { $set: entityWithoutId }, options)
         }
     }
 }
