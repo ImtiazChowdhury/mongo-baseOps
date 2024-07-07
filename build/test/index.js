@@ -12,9 +12,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// import mongoClient from "@imtiazchowdhury/mongopool";
-const __1 = __importDefault(require(".."));
-const dbOpsSDTS = new __1.default("user", "baseOpsTest[sdts]", "mongodb://localhost:27017", {
+const index_1 = __importDefault(require("./../index"));
+const dbOpsSDTS = new index_1.default("user", "baseOpsTest[sdts]", "mongodb://localhost:27017", {
     softDelete: true,
     timestamps: true
 });
@@ -34,14 +33,26 @@ function testSDTS() {
         const updatedResults = yield dbOpsSDTS.updateMany(results.map((r, i) => (Object.assign(Object.assign({}, r), { name: "Updated " + i }))));
         console.log("soft delete Updated Results length: ", updatedResults.modifiedCount, updatedResults);
         // try to update soft deleted users by override
-        const updatedResults2 = yield dbOpsSDTS.updateMany(results.map((r, i) => (Object.assign(Object.assign({}, r), { name: "Updated " + i }))), {}, true);
+        const updatedResults2 = yield dbOpsSDTS.updateMany(results.map((r, i) => ({ _id: r._id, name: "Updated " + i })), {}, true);
         console.log("hard delete Updated Results length: ", updatedResults2.modifiedCount, updatedResults2);
+        //
         // paginate results with soft deleted
         const paginatedResults = yield dbOpsSDTS.paginate([], [], {});
         console.log("soft delete -> Paginated Results length: ", paginatedResults.data.length);
         // paginate results without soft deleted
         const paginatedResults2 = yield dbOpsSDTS.paginate([], [], {}, [], {}, true);
         console.log("override soft delete -> Paginated Results length: ", paginatedResults2.data.length);
+        const findAndUpdateResults = yield dbOpsSDTS.findAndUpdate({}, {
+            name: "Updated Name"
+        });
+        console.log("soft delete -> Find and Update Results length: ", findAndUpdateResults.modifiedCount);
+        //finde with soft deleted
+        const foundResults = yield dbOpsSDTS.find({
+            deleted: {
+                $ne: false
+            }
+        });
+        console.log("soft delete -> Found Results length: ", foundResults.length);
         dbOpsSDTS.getClient().then(e => e.close());
     });
 }
