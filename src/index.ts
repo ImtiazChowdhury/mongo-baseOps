@@ -382,7 +382,7 @@ class BaseDatabaseOps<Type extends WithSoftDelete<WithTimeStamp<Document>> = Wit
         if (listSoftDeleted || !this.dbOpsOption.softDelete) {
             return await collection.findOne(filter, findOptions)
         } else {
-            filter = { ...filter, deleted: true }
+            filter = { ...filter, deleted: false }
             return await collection.findOne(filter, findOptions)
         }
     }
