@@ -316,7 +316,7 @@ class BaseDatabaseOps {
                 return yield collection.findOne(filter, findOptions);
             }
             else {
-                filter = Object.assign(Object.assign({}, filter), { deleted: true });
+                filter = Object.assign(Object.assign({}, filter), { deleted: false });
                 return yield collection.findOne(filter, findOptions);
             }
         });
